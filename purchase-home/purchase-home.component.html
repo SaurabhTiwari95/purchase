@@ -1,0 +1,351 @@
+<section class="content-header">
+  <h1>Purchase Functions</h1>
+</section>
+<section class="content">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">{{ company.CompanyFullName }}</h3>
+          <ul class="nav nav-tabs pull-right">
+            <li class="active"><a>Purchase Functions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="box custum-invoice-type">
+        <div class="box-body">
+          <div class="row">
+            <div [permissions]="['su', 'F152P1__', 'F159P1__']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-user"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip="Vendor Request for Quotation">Vendor RFQ</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F152P1__']">
+                      <a routerLink="vendor-request-for-quotation">Manage</a>
+                    </li>
+                    <li [permissions]="['su', 'F159P11_']">
+                      <a routerLink="rfq-purpose-user-mapping">Manage User Control</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F133P1__']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-shopping-cart"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip="Indent System">Indent</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F133P11_']">
+                      <a (click)="openForm('#/purchase/manage-indent')">Manage</a>
+                    </li>
+                    <li [permissions]="['su', 'F133P1__']">
+                      <a routerLink="indent-report">View Report</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F112P1__']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-shopping-cart"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip="Vendor Purchase Order">Vendor Purchase Order</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F112P1__']">
+                      <a (click)="openForm('#/purchase/make-purchase-order')">Manage</a>
+                    </li>
+                    <li [permissions]="['su', 'F112P1__']">
+                      <a (click)="
+                          openForm('#/purchase/vendor-purchase-order-report')
+                        ">View Report</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div [permissions]="['su', 'F30P11_', 'F31P1__']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-shopping-cart"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip="GST Return Report">GST Return</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F30P11_']">
+                      <a (click)="openForm('#/purchase/json-import')">Manage</a>
+                    </li>
+                    <li [permissions]="['su', 'F31P1__']">
+                      <a (click)="openForm('#/purchase/gst-report')">View</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F48P11_']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-shopping-cart"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip="Rejection CN Recieving">Rejection CN
+                    Recieving</span>
+                  <ul class="list-unstyled">
+                    <li>
+                      <a (click)="
+                          openForm(
+                            '#/purchase/vendor-rejection-credit-note-receiving'
+                          )
+                        ">Insert Note</a>
+                    </li>
+                    <li>
+                      <a (click)="
+                          openForm(
+                            '#/purchase/vendor-rejection-credit-note-receiving-report'
+                          )
+                        ">View Note</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F49P11_']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-shopping-cart"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number">DR/CR Note</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F49P11_']">
+                      <a (click)="
+                          openForm('#/purchase/note-file-upload-customer')
+                        ">Upload Notes</a>
+                    </li>
+                    <li [permissions]="['su', 'F49P1__']">
+                      <a (click)="openForm('#/purchase/uploaded-notes-report')">View Report</a>
+                    </li>
+                  <!-- Manual Dr/Cr -->
+                    <li>
+                      <!-- [permissions]="['su', 'F49P1__']" -->
+                      <a routerLink="manual-dr-cr">Manual Dr/Cr</a>
+                    </li>
+                  <!--  -->
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F51P1_1', 'F51P1__']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-shopping-cart"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number">DN/CN Approval</span>
+                  <ul class="list-unstyled">
+                    <li>
+                      <a (click)="
+                          openForm('#/purchase/debit-credit-note-approval')
+                        ">Approve Note</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F60P1__']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-shopping-cart"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip="Raw Material Allocation">Raw Material
+                    Allocation</span>
+                  <ul class="list-unstyled">
+                    <li>
+                      <a (click)="openForm('#/purchase/raw-material-allocation')">Manage</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F61P1__', 'F61P11_']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-shopping-cart"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip="Raw Material Allocation">Purchase Product Vendor
+                    Mapping</span>
+                  <ul class="list-unstyled">
+                    <li>
+                      <a (click)="
+                          openForm('#/purchase/purchase-product-vendor-mapping')
+                        ">Manage</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F95P1__']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-shopping-cart"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number">Vendor Scheduling</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F95P1__']">
+                      <a (click)="openForm('#/purchase/vendor-schedule-enter')">Generate & Cancel</a>
+                    </li>
+                    <li [permissions]="['su', 'F95P1__']">
+                      <a (click)="openForm('#/purchase/send-schedule-to-Vendor')">Send To Vendor</a>
+                    </li>
+                    <li [permissions]="['su', 'F95P1__']">
+                      <a (click)="openForm('#/purchase/view-schedule-reports')">View Report</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F94P1__']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-shopping-cart"></i>
+                </span>
+                <div class="info-box-content txt-elps">
+                  <span class="info-box-number txt-elps" matTooltip="Update Vendor Schedule">Update Vendor
+                    Schedule</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F94P1__']">
+                      <a (click)="openForm('#/purchase/vendor-schedule-update')">Manage</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F105P1__']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-shopping-cart"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip="Product Steel Grade">Product Steel Grade</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F105P1__']">
+                      <a (click)="
+                          openForm('#/purchase/manage-product-steel-grade')
+                        ">Manage</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F110P1__']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-money"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number" matTooltip="Vendor Cost Pricing">Vendor Cost Pricing</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F110P1__']">
+                      <a (click)="
+                          openForm('#/purchase/manage-Vendor-cost-pricing')
+                        ">Manage</a>
+                    </li>
+                    <li [permissions]="['su', 'F110P1__']">
+                      <a (click)="
+                          openForm(
+                            '#/purchase/view-supplementary-pending-report'
+                          )
+                        ">View Report</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div [permissions]="['su', 'F121P1__']" class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-money"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip="Vendor RM Ammendment">Vendor RM Ammendment</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F121P1__']">
+                      <a (click)="openForm('#/purchase/rm-ammendment')">Manage</a>
+                    </li>
+                    <li [permissions]="['su', 'F121P1__']">
+                      <a (click)="
+                          openForm(
+                            '#/purchase/view-vendor-rm-ammendment-report'
+                          )
+                        ">View Report</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" [permissions]="['su', 'F155P1__']">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-product-hunt"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip=" Product Master">
+                    Product Master</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F155P1__']">
+                      <a routerLink="product-master">Manage</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" [permissions]="['su', 'F171P1__']">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-product-hunt"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip=" Principal Vendor Mapping">
+                    Principal Vendor Mapping</span>
+                  <ul class="list-unstyled">
+                    <li [permissions]="['su', 'F171P1__']">
+                      <a routerLink="principal-vendor-mapping">Manage</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-blue">
+                  <i class="fa fa-bank"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-number txt-elps" matTooltip=" Vendor Bank Details">
+                    Vendor Bank Details</span>
+                  <ul class="list-unstyled">
+                    <li>
+                      <a routerLink="vendor-bank-details">Manage</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

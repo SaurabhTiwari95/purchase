@@ -1,0 +1,141 @@
+<hr class="custom-hr-with-large-width-ang7" />
+<div class="container">
+  <form [formGroup] = "bankDetailsForm">
+    <div class="border-right-left">
+      <div class="form-header txt-center">BANK DETAILS FORM</div>
+      <div class="txt-center"><small>(Please Print Clearly or type Information)</small></div>
+      <h5 class="either-side-line">Vendor/Payee Information</h5>
+      <div class="row">
+        <div class="col-md-12 form-group">
+          <div class="col-md-6">
+            <label for="address">Address</label>
+            <input type="text" placeholder="Address" class="form-control" autocomplete="off" formControlName="address">
+          </div>
+          <div class="col-md-6">
+            <label for="email">Email</label>
+            <input type="text" placeholder="Email" class="form-control" autocomplete="off" formControlName="email">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 form-group">
+          <div class="col-md-6">
+            <label for="printname">Print Name</label>
+            <input type="text" placeholder="Print Name" class="form-control" autocomplete="off" formControlName="printname">
+          </div>
+        </div>
+      </div>
+      <h5 class="either-side-line">Banking Information</h5>
+      <div class="row">
+        <div class="col-md-12 form-group">
+          <div class="col-md-6">
+            <label for="bank name">Bank Name</label>
+            <input type="text" placeholder="Bank Name" class="form-control" autocomplete="off" formControlName="bankname">
+          </div>
+          <div class="col-md-6">
+            <label for="account number">Account Number</label>
+            <input type="text" placeholder="Account Number" class="form-control" autocomplete="off" formControlName="accountnumber">
+          </div>          
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 form-group">
+          <div class="col-md-6">
+            <label for="ifsc code">IFSC Code</label>
+            <input type="text" placeholder="IFSC Code" class="form-control" autocomplete="off" formControlName="ifsccode">
+          </div>
+          <div class="col-md-6">
+            <label for="bank name">Branch Name</label>
+            <input type="text" placeholder="Branch Name" class="form-control" autocomplete="off" formControlName="branchname">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 form-group">
+          <div class="col-md-6">
+            <label for="micr">MICR</label>
+            <input type="text" placeholder="MICR" class="form-control" autocomplete="off" formControlName="micr">
+          </div>
+          <div class="col-md-6">
+            <label for="transaction type">Transaction Type</label>
+            <ng-select 
+            bindLabel="transactionTypeName" 
+            placeholder="Select Transaction Type" 
+            [items]="transactionTypeArray"
+            [(ngModel)]="bankDetailsService.vendorBankDetailsObject.slctdTransactionType"
+            formControlName="transactiontype"            
+            >
+            <ng-template ng-label-tmp let-item="item">
+              <span>{{ item.transactionTypeName }}</span>
+            </ng-template>
+            <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+              <span [ngOptionHighlight]="search">{{ item.transactionTypeName}}</span>                              
+            </ng-template>
+            </ng-select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 form-group">
+          <div class="col-md-8">
+            <label>Cancel Check</label>
+            <div class="input-group">
+              <input type="file" multiple formControlName="chequeupload" class="form-control" (input)="convertToBase64UploadProductImages($event)"/>
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default">            
+                <i class="fa fa-upload" aria-hidden="true"></i>
+                  Upload
+                </button>
+                <button type="button" class="btn btn-default">            
+                <i class="fa fa-eye" aria-hidden="true"></i>
+                  View
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+       
+      <!-- file upload html start-->      
+    <div class="col-md-12" *ngIf="!bankDetailsService.vendorBankDetailsObject.uploadedCheckImages.length">
+      <p class="italic-text">No Document(s) have been added yet.</p>      
+    </div>
+    <div class="col-md-12" *ngIf="bankDetailsService.vendorBankDetailsObject.uploadedCheckImages.length">                
+      <div *ngFor="let url of bankDetailsService.vendorBankDetailsObject.uploadedCheckImages; let i = index">            
+        <div *ngIf="(url.documentS3Link && !url.isDeleted) || url.base64">             
+          <img src="{{ (url.documentS3Link && !url.isDeleted && url.documentS3Link) || (url.base64 && 'data:image/png;base64,' + url.base64)}}"                            
+            class="rounded mb-3"
+            width="250"
+            height="250"/>          
+          <i role="button" title="Delete Document" (click)="deleteChequeImage(i)" class="fa fa-close pull-right text-red"style="position: absolute;"></i>                
+          <a download="{{ url.documentName }}" href="{{ url.documentS3Link }}" *ngIf="url.documentS3Link && !url.isDeleted">                                    
+            <i title="Download Image" class="fa fa-download pull-right text-primary" style="position: absolute;top: 50px;"></i>                          
+          </a>       
+        </div>
+      </div>
+    </div>
+    <!-- file upload html end-->
+
+    <div class="row">
+      <div class="col-md-12">          
+        <div class="col-md-12">            
+          <button class="btn btn-danger" (click) = "resetbankDetailsForm()">Reset</button>
+          <button class="btn btn-primary pull-right" [disabled] = "!bankDetailsForm.valid">Submit</button>
+        </div>
+      </div>
+    </div>  
+
+    </div>
+      
+
+    
+
+    
+  </form>
+</div>
+
+
+
+

@@ -1,0 +1,79 @@
+<hr class="custom-hr-with-large-width-ang7">
+<div class="container">
+  <div class="table-title">
+    BANK DETAILS HISTORY OF <span class="table-heading"></span>
+  </div>
+  <ngx-datatable class="material" [columnMode]="'flex'" [headerHeight]="50" [scrollbarH]="true" [limit]="10"
+      [footerHeight]="50" [rowHeight]="'auto'" [rows]="bankDetailsService.vendorBankDetailsObject.getVendorBankDetailArray">
+
+  <ngx-datatable-column name="Entry Id"  [flexGrow]="1" [sortable]="true">   
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row.entryId }}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Vendor Id"  [flexGrow]="1" [sortable]="true">   
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row.vendorId }}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Bank Name"  [flexGrow]="1" [sortable]="true">   
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row.bankName }}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Branch Name"  [flexGrow]="1" [sortable]="true">   
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row.branchName }}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Account Number"  [flexGrow]="1" [sortable]="true">   
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row.accountNo }}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="IFSC Code"  [flexGrow]="1" [sortable]="true">   
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row.iFSCCode }}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Address"  [flexGrow]="1" [sortable]="true">   
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row.address }}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="MICR"  [flexGrow]="1" [sortable]="true">   
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row.micr }}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Print Name"  [flexGrow]="1" [sortable]="true">   
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      {{ row.printName }}
+    </ng-template>
+  </ngx-datatable-column>
+  
+  <ngx-datatable-column name="Action"  [flexGrow]="1" [sortable]="true">   
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      <button class="btn btn-success btn-sm" (click) = "updateBankDetails()"><i class="fas fa-edit"></i> Edit</button>
+    </ng-template>
+  </ngx-datatable-column>
+
+
+</ngx-datatable>
+
+</div>
+
+
+<ng-container *ngIf="bankDetailsService.toUpdateBankDetails">
+  <app-update-vendor-bank-details></app-update-vendor-bank-details>
+</ng-container>
+
+  

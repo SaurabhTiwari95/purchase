@@ -1,0 +1,126 @@
+<form #product_master_home="ngForm">
+  <div class="row pad-t">
+    <div class="col-md-12 np-lr">
+      <div class="col-md-4 form-group">
+        <label>What do you want to do?</label>
+        <ng-select
+          name="whattodo"
+          [items]="whatToDoDetails"
+          [bindLabel]="'whatToDoName'"
+          [(ngModel)]="local.productMasterObj.slctdWhatToDo"
+          placeholder="Select What do you want to do?"
+          (change)="getDependentsOfWhatToDo()"
+          [disabled]="local.isProductEditMode"
+          required
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <span>{{ item.whatToDoName }}</span>
+          </ng-template>
+          <ng-template
+            ng-option-tmp
+            let-item="item"
+            let-index="index"
+            let-search="searchTerm"
+          >
+            <span [ngOptionHighlight]="search">{{ item.whatToDoName }}</span>
+          </ng-template>
+        </ng-select>
+      </div>
+      <div
+        class="col-md-4 form-group"
+        *ngIf="
+          local.productMasterObj.slctdWhatToDo &&
+          local.productMasterObj.slctdWhatToDo.whatToDoId == 2
+        "
+      >
+        <label
+          >Product Group <small class="italic-text">( Optional )</small></label
+        >
+        <ng-select
+          name="productgroup"
+          [items]="local.productGroupDetails"
+          [bindLabel]="'GrpDesc'"
+          [(ngModel)]="local.productMasterObj.slctdProductGroup"
+          [searchFn]="customSearchFnForProductGroup"
+          placeholder="Select Product Group"
+          [disabled]="local.disableButton"
+          (change)="resetProdGrpDependent()"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <span>{{ item.GrpDesc }}</span> -
+            <span>{{ item.GroupId }}</span>
+          </ng-template>
+          <ng-template
+            ng-option-tmp
+            let-item="item"
+            let-index="index"
+            let-search="searchTerm"
+          >
+            <span [ngOptionHighlight]="search">{{ item.GrpDesc }}</span> -
+            <span [ngOptionHighlight]="search">{{ item.GroupId }}</span>
+          </ng-template>
+        </ng-select>
+      </div>
+      <div
+        class="col-md-4 form-group"
+        *ngIf="
+          local.productMasterObj.slctdWhatToDo &&
+          local.productMasterObj.slctdWhatToDo.whatToDoId == 2
+        "
+      >
+        <label
+          >Product Search By
+          <small class="italic-text">
+            ( Enter atleast 3 characters )
+          </small></label
+        >
+        <input
+          type="text"
+          name="productsearchby"
+          class="form-control"
+          [(ngModel)]="local.productMasterObj.productSearchBy"
+          placeholder="Product Search By Product Id or Product Name"
+          (input)="checkIfLengthOfProductSearchBy($event)"
+          (keydown.enter)="local.getSearchProdIdAndProdDesc()"
+          [disabled]="local.isProductEditMode"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="row"
+    *ngIf="
+      local.productMasterObj.slctdWhatToDo &&
+      local.productMasterObj.slctdWhatToDo.whatToDoId == 2
+    "
+  >
+    <div class="col-md-12">
+      <button
+        type="button"
+        class="btn btn-primary pull-right"
+        (click)="local.getSearchProdIdAndProdDesc()"
+        [disabled]="
+          !product_master_home.valid ||
+          local.disableButton ||
+          local.isProductEditMode ||
+          !validProductSearchByLength
+        "
+        col-button-only
+      >
+        Get Product(s)
+      </button>
+    </div>
+  </div>
+</form>
+<ng-container
+  *ngIf="
+    (local.productMasterObj.slctdWhatToDo &&
+      local.productMasterObj.slctdWhatToDo.whatToDoId == 1) ||
+    local.showProductCreateTpl
+  "
+>
+  <app-create-product></app-create-product>
+</ng-container>
+<ng-container *ngIf="local.showProductDetailsTable">
+  <app-products-table></app-products-table>
+</ng-container>

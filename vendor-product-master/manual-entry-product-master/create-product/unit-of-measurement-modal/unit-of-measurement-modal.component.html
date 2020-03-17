@@ -1,0 +1,93 @@
+<div class="header heading-with-hr">
+  <h4 style="margin: 0;">
+    {{isUnitOfMeasurementUpdateMode && 'Update'|| 'Add'}} Unit of Measurement
+    <span *ngIf="isUnitOfMeasurementUpdateMode">with Unit Short Name :
+      {{(filterDataOfUnitOfMeasurement[indexOfUnit] && filterDataOfUnitOfMeasurement[indexOfUnit].productSpecUnitShortName) || (productCreationObj.slctdUnitOfMeasurement && productCreationObj.slctdUnitOfMeasurement.productSpecUnitShortName)}}</span>
+  </h4>
+</div>
+<div class="body">
+  <form #unit_of_measurement="ngForm">
+    <div class="row pad-t">
+      <div class="col-md-12">
+        <div class="col-md-4 form-group" [ngClass]="{'has-error' : invalidFullNameOfUnit}">
+          <label *ngIf="!invalidFullNameOfUnit">Full Name of Unit</label>
+          <label *ngIf="invalidFullNameOfUnit">Max Length of Full Name of Unit can be 50</label>
+          <input type="text" name="fullnameofunitmeasurement" class="form-control"
+            [(ngModel)]="unitOfMeasurementObj.productSpecUnitName" [disabled]="disableButton"
+            placeholder="Enter Full Name of Unit of Measurement" (input)="checkIfFullNameUnit($event);" required>
+        </div>
+        <div class="col-md-4 form-group" [ngClass]="{'has-error' : invalidShortNameOfUnit}">
+          <label *ngIf="!invalidShortNameOfUnit">Short Name of Unit </label>
+          <label *ngIf="invalidShortNameOfUnit">Max Length of Short Name of Unit can be 50</label>
+          <input type="text" name="shortnameofunitmeasurement" class="form-control"
+            [(ngModel)]="unitOfMeasurementObj.productSpecUnitShortName" [disabled]="disableButton"
+            placeholder="Enter Short Name of Unit of Measurement" (input)="checkIfShortNameUnit($event);" required>
+        </div>
+        <div class="col-md-4 form-group">
+          <button type="button" class="btn btn-danger pull-right" col-button-only (click)="cancelUnitOfMeasurement();"
+            *ngIf="isUnitOfMeasurementUpdateMode" style="margin-left: 10px;">Cancel</button>
+          <button type="button" class="btn btn-primary pull-right"
+            [disabled]="!unit_of_measurement.valid || disableButton || btnDisablingOnError" col-button-only
+            (click)="addUpdateUnitOfMeasurement();"
+            [permissions]="['su', 'F155P11_', 'F157P11_']">{{isUnitOfMeasurementUpdateMode && 'Update' || 'Add'}}
+            Unit</button>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="row">
+    <div class="col-md-12">
+      <span style="color:#2e9694;padding-left: 10px;font-size: 17px" *ngIf="successMsg"><i
+          class="fa fa-thumbs-o-up"></i>
+        {{successMsg}}</span>
+      <span style="color:#f56363;padding-left: 10px; font-size: 17px" *ngIf="errorMsg"><i
+          class="fa fa-thumbs-o-down"></i>
+        {{errorMsg}}</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 pad-lr-30">
+      <h4 class="heading-with-hr">Available Units of Measurement</h4>
+    </div>
+  </div>
+  <div class="row ">
+    <div class="col-md-12 pad-lr-15 pad-b">
+      <div class="col-md-10"></div>
+      <div class="col-md-2">
+        <input type="text" name="filterunit" class="form-control" placeholder="Search Here..."
+          (input)="filterUnitDatatable($event);">
+      </div>
+    </div>
+    <div class="col-md-12 table-responsive pad-lr-30">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Sl No.</th>
+            <th>Unit Full Name</th>
+            <th>Unit Short Name</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody all-td-vertical-align-middle>
+          <tr *ngFor="let unit of filterDataOfUnitOfMeasurement; let i = index">
+            <td>{{i + 1}}</td>
+            <td>{{unit.productSpecUnitName}}</td>
+            <td>{{unit.productSpecUnitShortName}}</td>
+            <td>
+              <button type="button" class="btn btn-default" title="Edit Unit of Measurement"
+                (click)="editProductUnit(i);" [disabled]="disableButton"><i class="fa fa-edit"></i></button>
+            </td>
+          </tr>
+          <tr></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div style="border-top: 1px solid #ccc">
+  <div class="col-md-12 " style="padding-top: 10px; padding-right: 0px;">
+    <button class="btn btn-danger pull-right" (click)="closeModalDataOfUnitOfMeasuremnt()">
+      Close
+    </button>
+  </div>
+</div>

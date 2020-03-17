@@ -1,0 +1,17 @@
+::ng-deep .nsm-dialog{
+    max-width: unset !important;
+    overflow-y: initial !important;
+    width: calc(80% - 20px) !important;
+  }
+  
+  ::ng-deep .overlay.nsm-overlay-open{
+    overflow: hidden !important;
+    padding-left: 0px !important;
+  }
+  
+  ::ng-deep .nsm-body .body{
+    min-height: 65vh !important;
+    max-height: 76vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }

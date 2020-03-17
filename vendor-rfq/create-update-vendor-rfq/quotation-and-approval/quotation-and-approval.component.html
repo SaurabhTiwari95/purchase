@@ -1,0 +1,55 @@
+<form #quotation_form="ngForm" novalidate>
+    <div class="row">
+        <div class="col-md-12" *ngFor="let quotation of service.vendorRfqCreate.revisionDetails[service.quotationIndex].quoteDetails;let i = index">
+            <div class="col-md-12">
+                <h5 class="heading-with-hr"><a><b>{{i+1}}. {{quotation.vendorName}} ~ {{quotation.vendorId}}</b></a></h5>
+            </div>
+            <div class="table-responsive col-md-12 form-group">
+                <table class="table table-csv" inline-editable-table>
+                    <thead class="bg-light-green">
+                        <tr>
+                            <th width="5%">Sl. No.</th>
+                            <th width="25%">Product Name</th>
+                            <th width="10%">Product Id</th>
+                            <th width="10%">Product Unit</th>
+                            <th width="15%" numeric-column>Latest Approved Rate</th>
+                            <th width="15%">Product Rate</th>
+                            <th width="20%">Product Quotation </th>
+                        </tr>
+                    </thead>
+                    <tbody all-td-vertical-align-middle>
+                        <tr *ngFor="let prod of quotation.productDetails;let j = index">
+                            <td>{{j+1}}</td>
+                            <td>{{prod.productName}}</td>
+                            <td>{{prod.productId}}</td>
+                            <td>{{prod.productUnit}}</td>
+                            <td  numeric-column>{{prod.latestApprovedRate | currency:'INR'}}</td>
+                            <td>
+                                <div class="input-group" [ngClass]="{'modified-row': prod.rateChanged }">
+                                    <input type="number" name="productrate{{j}}" class="editable form-control" style="text-align: left;font-size: 14px;" [(ngModel)]="prod.productRate"
+                                    placeholder="Enter Product Rate"  [disabled]="service.disabledButtonAndField" />
+                                </div>
+                            </td>
+                            <td>
+                                <input (input)="handleFileInput($event,i,j)" type="file"  name="productquotation{{j}}" multiple [disabled]="disabledButtonAndField"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="row">
+    <div class="col-md-12 np-lr">
+        <div class="col-md-6 form-group">
+            <button type="button" class="btn btn-default" col-button-only (click)="goToStep2()" [disabled]="service.disabledButtonAndField">&lt; Prev</button>
+            <button type="button" class="btn btn-danger" style="margin-left: 10px;" [disabled]="service.disabledButtonAndField" *ngIf="service.isInUpdateMode" col-button-only (click)="service.cancelUpdateMode()">
+                Cancel Update Mode
+            </button>
+        </div>
+        <div class="col-md-6 form-group">
+            <button type="button" class="btn btn-primary pull-right" [permissions]="['su', 'F152P11_']" [disabled]="service.disabledButtonAndField" (click)="saveQuotesForRfq()" col-button-only> Submit for Apparoval</button>
+        </div>
+    </div>
+</div>

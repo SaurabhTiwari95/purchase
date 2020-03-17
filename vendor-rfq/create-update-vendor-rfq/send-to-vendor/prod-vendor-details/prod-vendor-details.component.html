@@ -1,0 +1,142 @@
+<ngx-smart-modal
+  #myModalRef
+  identifier="prodAndVendorModal"
+  
+>
+<!-- (onAnyCloseEvent)="onProdAndVendorModalClose()" -->
+<!-- (onOpen)="getApprovalDetailsForVendorRfq()" -->
+  <div class="header heading-with-hr">
+      <h4 style="margin: 0;">
+        Product and Vendor Details of RFQ Id : <span class="italic-text">{{service.prodAndVendorDetailsView.rfqId}} </span> <span *ngIf="service.prodAndVendorDetailsView.viewProductAndVendorDetails">& Version Number : <span class="italic-text">{{service.prodAndVendorDetailsView.versionNumber}}</span></span>
+      </h4>
+  </div>
+  <div class="body">
+    <div class="row ">
+      <div class="col-md-12">
+        <div class="col-md-12 form-group ">
+          <h4 class="heading-with-hr">Products</h4>
+        </div>
+        <div class="table-responsive col-md-12 form-group">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th width="10%">Sl. No.</th>
+                <th width="40%">Product</th>
+                <th width="40%">Product Description</th>
+                <th width="25%">Unit</th>
+                <th width="25%" numeric-column>Quantity</th>
+                <th status-column  *ngIf="!service.prodAndVendorDetailsView.viewProductAndVendorDetails">Action</th>
+              </tr>
+            </thead>
+            <tbody all-td-vertical-align-middle>
+              <tr *ngFor="let prod of service.vendorRfqCreate.productAndVendorDetails.addedProducts; let i=index">
+                <td>{{i+1}}</td>
+                <td>{{prod.slctdProduct.prodDesc}} - {{prod.slctdProduct.productId}}</td>
+                <td>{{prod.prodDescription}}</td>
+                <td>{{prod.slctdProduct.prodUnit}}</td>
+                <td numeric-column>{{prod.quantity | number:'.3-3' }}</td>
+                <td status-column width="15%"  *ngIf="!service.prodAndVendorDetailsView.viewProductAndVendorDetails">
+                  <button type="button" title="Edit Product" class="btn btn-default action-button" [disabled]="service.disabledButtonAndField" (click)="editProduct(i)" data-toggle="collapse" href="#collapdeBoxForProduct">
+                    <i class="fa fa-edit"></i> 
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="!service.vendorRfqCreate.productAndVendorDetails.addedProducts.length">
+                <td colspan="42">
+                  <span class="nothing-found-note">No Product Available</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="box col-md-12 collapse-box-border" style="box-shadow:none;border-top:none;"  *ngIf="!service.prodAndVendorDetailsView.viewProductAndVendorDetails" [permissions]="['su', 'F152P11_']">
+      <div class="box-header  np-lr">
+        <div class="user-block">
+          <h4 style="margin: 0;">
+            Add Products
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-toggle="collapse" href="#collapdeBoxForProduct" [disabled]="service.disabledButtonAndField" (click)="createProduct()">
+                <i class="fa fa-plus"></i> Add
+            </button>
+            </div>
+          </h4>
+        </div>
+      </div>
+      <div class="box-body np-lr collapse" id="collapdeBoxForProduct">
+        <div class="row ">
+          <div class="col-md-12">
+            <div class="col-md-6 form-group">
+              <label>Product</label>
+              <input type="text" class="form-control" placeholder="Select Product" value="{{newProduct.slctdProduct.prodDesc}} - {{newProduct.slctdProduct.productId}} - {{newProduct.slctdProduct.prodUnit}}" disabled />
+            </div>
+            <div class="col-md-6 form-group">
+              <label>Quantity</label>
+              <input type="number" placeholder="Enter Quantity" [(ngModel)]="newProduct.quantity" name="quantity" class="form-control" disabled />
+            </div>
+            <div class="col-md-12 np-lr form-group">
+              <div class="col-md-6">
+                <label>Product Description</label>
+                <textarea class="form-control" [(ngModel)]="newProduct.prodDescription" name="proddescription" placeholder="Product Description" [disabled]="service.disabledButtonAndField"></textarea>
+              </div>
+              <div class="col-md-6">
+                <button type="button" class="btn btn-primary pull-right btn-sm" col-button-only (click)="updateProduct()" *ngIf="editMode" [disabled]="!newProduct.prodDescription || service.disabledButtonAndField">Update</button>
+                <button type="button" class="btn btn-default pull-right btn-sm" style="margin-right: 10px;" col-button-only [disabled]="service.disabledButtonAndField" (click)="createProduct()"  data-toggle="collapse" href="#collapdeBoxForProduct" [disabled]="service.disabledButtonAndField">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row pad-t">
+      <div class="col-md-12">
+        <div class="col-md-12 form-group ">
+          <h4 class="heading-with-hr">Vendor</h4>
+        </div>
+        <div class="table-responsive col-md-12 form-group">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th width="10%">Sl. No.</th>
+                <th width="50%">Vendor Name</th>
+                <th width="20%">Vendor Id</th>
+                <th width="20%">Vendor Email Id</th>
+              </tr>
+            </thead>
+            <tbody all-td-vertical-align-middle>
+              <tr *ngFor="let prod of service.vendorRfqCreate.productAndVendorDetails.addedVendors; let i=index">
+                <td>{{i+1}}</td>
+                <td>{{prod.slctdVendor.vendorName}}</td>
+                <td>{{prod.slctdVendor.vendorId}}</td>
+                <td>{{prod.slctdVendor.vendorEmailId}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="border-top: 1px solid #ccc">
+    <div class="col-md-12" style="padding-top: 10px;padding-right: 0px;">
+        <button
+        class="btn btn-danger pull-right"
+        style="margin-left: 10px;"
+        type="button"
+        (click)="onProdAndVendorModalClose()"
+        title="Close"
+        >
+        Close
+      </button>
+      <button
+      *ngIf="!service.prodAndVendorDetailsView.viewProductAndVendorDetails"
+      class="btn btn-primary pull-right"
+      type="button"
+      (click)="addNewVersionForRfq()"
+      title="Add New Version"
+      >
+      Add New Version
+      </button>
+    </div>
+  </div>
+</ngx-smart-modal>

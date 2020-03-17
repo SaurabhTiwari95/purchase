@@ -1,0 +1,199 @@
+<form #product_form="ngForm" novalidate>
+  <div class="row ">
+    <div class="col-md-12">
+      <div class="col-md-12 form-group ">
+        <h4 class="heading-with-hr">Added Products</h4>
+      </div>
+      <div class="table-responsive col-md-12 form-group">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Sl. No.</th>
+              <th>Product</th>
+              <th>Unit</th>
+              <th>Product Description</th>
+              <th numeric-column>Quantity</th>
+              <th status-column *ngIf="service.canBeEdited">Action</th>
+            </tr>
+          </thead>
+          <tbody all-td-vertical-align-middle>
+            <tr *ngFor="let prod of service.vendorRfqCreate.productAndVendorDetails.addedProducts; let i=index">
+              <td width="10%">{{i+1}}</td>
+              <td width="20%">{{prod.slctdProduct.prodDesc}} - {{prod.slctdProduct.productId}}</td>
+              <td width="15%">{{prod.slctdProduct.prodUnit}}</td>
+              <td width="25%"><p [ngClass]="{'italic-text': !prod.prodDescription}">{{prod.prodDescription && prod.prodDescription || 'Not Available'}}</p></td>
+              <td numeric-column width="15%">{{prod.quantity | number:'.3-3' }}</td>
+              <td status-column width="15%" *ngIf="service.canBeEdited">
+                <button type="button" title="Edit Product" class="btn btn-default action-button" *ngIf="service.canBeEdited" 
+                 [disabled]="service.disabledButtonAndField" (click)="editProduct(i)" [permissions]="['su', 'F152P11_']" data-toggle="collapse" href="#collapdeBoxForProduct">
+                  <i class="fa fa-edit"></i> 
+                </button>
+                <button type="button" title="Delete Product" class="btn btn-default action-button" *ngIf="service.vendorRfqCreate.basicDetails.isUnderCreation" 
+                [disabled]="service.disabledButtonAndField" [permissions]="['su', 'F152P11_']" (click)="deleteProduct(i)"> <i class="fa fa-trash"></i> </button>
+              </td>
+            </tr>
+            <tr *ngIf="!service.vendorRfqCreate.productAndVendorDetails.addedProducts.length">
+              <td colspan="42">
+                <span class="nothing-found-note">No product have been added yet</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="box col-md-12 collapse-box-border" style="box-shadow:none;border-top:none;" *ngIf="service.canBeEdited" [permissions]="['su', 'F152P11_']">
+    <div class="box-header  np-lr">
+      <div class="user-block">
+        <h4 style="margin: 0;">
+          Add Products
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-toggle="collapse"  href="#collapdeBoxForProduct" [disabled]="service.disabledButtonAndField" (click)="createProduct()">
+              <i class="fa fa-plus"></i> Add
+          </button>
+          </div>
+        </h4>
+      </div>
+    </div>
+    <div class="box-body np-lr collapse" id="collapdeBoxForProduct">
+      <div class="row ">
+        <form novalidate #prod_form="ngForm">
+          <div class="col-md-12">
+            <div class="col-md-6 form-group" [ngClass]="{'has-error': productAlreadyAdded}">
+              <label *ngIf="!productAlreadyAdded">Product</label>
+              <label *ngIf="productAlreadyAdded">Product Already Added</label>
+              <ng-select [items]="service.productBuffer" [virtualScroll]="true" [loading]="service.loading" bindLabel="prodDesc"  placeholder="Select Product"
+              (scroll)="onScroll($event)" name="product" [(ngModel)]="newProduct.slctdProduct" [disabled]="service.disabledButtonAndField || editMode"
+              (scrollToEnd)="onScrollToEnd()" required [searchFn]="service.customSearchFnForProduct">
+                <ng-template ng-label-tmp let-item="item">
+                  <span>{{item.prodDesc}}</span> - 
+                  <span>{{item.productId}}</span> -
+                  <span>{{item.prodUnit}}</span>
+                  </ng-template>
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                  <span>{{item.prodDesc}}</span> - 
+                  <span>{{item.productId}}</span> -
+                  <span>{{item.prodUnit}}</span>
+                </ng-template>
+              </ng-select>
+            </div>
+            <div class="col-md-6 form-group">
+              <label>Quantity</label>
+              <input type="number" placeholder="Enter Quantity" [(ngModel)]="newProduct.quantity" name="quantity" class="form-control" required [disabled]="service.disabledButtonAndField || editMode" />
+            </div>
+            <div class="col-md-12 np-lr form-group">
+              <div class="col-md-6">
+                <label>Product Description</label>
+                <textarea class="form-control" [(ngModel)]="newProduct.prodDescription" name="proddescription" required placeholder="Product Description" [disabled]="service.disabledButtonAndField"></textarea>
+              </div>
+              <div class="col-md-6">
+                <button type="button" class="btn btn-primary pull-right btn-sm" col-button-only (click)="addProduct()" [permissions]="['su', 'F152P11_']" *ngIf="!editMode  && service.vendorRfqCreate.basicDetails.isUnderCreation" [disabled]="prod_form.invalid || service.disabledButtonAndField">Add</button>
+                <button type="button" class="btn btn-primary pull-right btn-sm" col-button-only (click)="updateProduct()" [permissions]="['su', 'F152P11_']" *ngIf="editMode" [disabled]="prod_form.invalid || service.disabledButtonAndField">Update</button>
+                <button type="button" class="btn btn-default pull-right btn-sm" style="margin-right: 10px;" col-button-only (click)="createProduct()"   data-toggle="collapse" href="#collapdeBoxForProduct" [disabled]="service.disabledButtonAndField">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</form>
+<form #vendor_form="ngForm" novalidate>
+  <div class="row pad-t">
+    <div class="col-md-12">
+      <div class="col-md-12 form-group ">
+        <h4 class="heading-with-hr">Added Vendor</h4>
+      </div>
+      <div class="table-responsive col-md-12 form-group">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Sl. No.</th>
+              <th>Vendor Name</th>
+              <th>Vendor Id</th>
+              <th>Vendor Email Id</th>
+              <th status-column *ngIf="service.vendorRfqCreate.basicDetails.isUnderCreation">Action</th>
+            </tr>
+          </thead>
+          <tbody all-td-vertical-align-middle>
+            <tr *ngFor="let prod of service.vendorRfqCreate.productAndVendorDetails.addedVendors; let i=index">
+              <td width="10%">{{i+1}}</td>
+              <td width="35%">{{prod.slctdVendor.vendorName}}</td>
+              <td width="15%">{{prod.slctdVendor.vendorId}}</td>
+              <td width="25%">{{prod.slctdVendor.vendorEmailId}}</td>
+              <td status-column width="15%" *ngIf="service.vendorRfqCreate.basicDetails.isUnderCreation">
+                <button type="button" title="Delete Product" [permissions]="['su', 'F152P111']" class="btn btn-default action-button" [disabled]="service.disabledButtonAndField" 
+                (click)="deleteVendor(i)"> <i class="fa fa-trash"></i> </button>
+              </td>
+            </tr>
+            <tr *ngIf="!service.vendorRfqCreate.productAndVendorDetails.addedVendors.length">
+              <td colspan="42">
+                <span class="nothing-found-note">No vendor have been added yet</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="box col-md-12 collapse-box-border" style="box-shadow:none;border-top:none;" *ngIf="service.vendorRfqCreate.basicDetails.isUnderCreation" [permissions]="['su', 'F152P11_']">
+    <div class="box-header np-lr">
+      <div class="user-block">
+        <h4 style="margin: 0;">
+          Add Vendor
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-toggle="collapse" href="#collapdeBoxForVendor" [disabled]="service.disabledButtonAndField" (click)="createVendor()">
+              <i class="fa fa-plus"></i> Add
+          </button>
+          </div>
+        </h4>
+      </div>
+    </div>
+    <div class="box-body np-lr collapse" id="collapdeBoxForVendor">
+      <div class="row ">
+        <form #vendor_form="ngForm" novalidate>
+          <div class="col-md-12">
+            <div class="col-md-6 form-group" [ngClass]="{'has-error': vendorAlreadyAdded}">
+              <label *ngIf="!vendorAlreadyAdded">Vendor</label>
+              <label *ngIf="vendorAlreadyAdded">Vendor Already Added</label>
+              <ng-select name="vendor" [items]="service.vendorDetails" [(ngModel)]="newVendor.slctdVendor"
+              [bindLabel]="'vendorName'" placeholder="Select Vendor" [disabled]="service.disabledButtonAndField" [searchFn]="service.customSearchFnForVendor" required >
+                <ng-template ng-label-tmp let-item="item">
+                    <span class="ng-value-label">{{item.vendorName}} - {{item.vendorId}}</span>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item"> {{item.vendorName}} - {{item.vendorId}} </ng-template>
+              </ng-select>
+            </div>
+            <div class="col-md-6 form-group">
+              <button type="button" class="btn btn-primary pull-right btn-sm" col-button-only (click)="addVendor()" [permissions]="['su', 'F152P11_']" [disabled]="service.disabledButtonAndField || vendor_form.invalid">Add</button>
+              <button type="button" class="btn btn-default pull-right btn-sm" style="margin-right: 10px;" col-button-only (click)="createVendor()"  data-toggle="collapse" href="#collapdeBoxForVendor" [disabled]="service.disabledButtonAndField">Cancel</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</form>
+<div class="row">
+  <div class="col-md-12 np-lr">
+    <div class="col-md-6 form-group">
+        <button type="button" class="btn btn-danger" *ngIf="service.isInUpdateMode" col-button-only (click)="service.cancelUpdateMode()">
+            Cancel Update Mode
+        </button>
+    </div>
+    <div class="col-md-6 form-group">
+      <button type="button" class="btn btn-primary pull-right" col-button-only 
+      (click)="performActionAccordingToTheMode()"
+      [permissions]="['su', 'F152P11_']"
+      *ngIf="service.canBeEdited"
+      [disabled]="service.disabledButtonAndField || !service.vendorRfqCreate.productAndVendorDetails.addedVendors.length || !service.vendorRfqCreate.productAndVendorDetails.addedProducts.length ">
+        Save & Next &gt;
+      </button>
+      <button type="button" class="btn btn-primary pull-right" *ngIf="!service.canBeEdited"
+      [disabled]="service.disabledButtonAndField" col-button-only 
+      (click)="service.vendorRfqCreate.basicDetails.ifPageNum = 2;">
+        Next &gt;
+      </button>
+    </div>
+  </div>
+</div>

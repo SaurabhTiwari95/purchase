@@ -1,0 +1,75 @@
+<ngx-smart-modal
+  #myModalRef
+  identifier="quotationDetailsModal"
+  
+>
+<!-- (onAnyCloseEvent)="onQuotationModalClose()" -->
+  <div class="header heading-with-hr">
+    <h4 style="margin: 0;">
+      Quotation Details of RFQ Id : <span class="italic-text">{{service.vendorRfqCreate.basicDetails.rfqId}}  </span>& Version Number : <span class="italic-text">{{quotationDetails.versionNumber}}</span>
+    </h4>
+  </div>
+  <div class="body">
+    <div class="row ">
+      <div class="col-md-12 np-lr">
+        <!-- <div class="col-md-12 form-group ">
+          <h4 class="heading-with-hr">Entered Quotation Details</h4>
+        </div> -->
+        <div class="col-md-12" *ngFor="let quotation of quotationDetails.enteredQuoteDetails;let i = index">
+          <div class="col-md-12">
+              <h5 class="heading-with-hr"><a><b>{{i+1}}. {{quotation.vendorName}} ~ {{quotation.vendorId}}</b></a></h5>
+          </div>
+          <div class="table-responsive col-md-12 form-group">
+              <table class="table table-csv">
+                  <thead class="bg-light-green">
+                      <tr>
+                        <th width="5%">Sl. No.</th>
+                        <th width="30%">Product Name</th>
+                        <th width="10%">Product Id</th>
+                        <th width="10%">Product Unit</th>
+                        <th width="15%" numeric-column>Latest Approved Rate</th>
+                        <th width="15%" numeric-column>Product New Rate</th>
+                        <th width="15%">Document</th>
+                      </tr>
+                  </thead>
+                  <tbody all-td-vertical-align-middle>
+                      <tr *ngFor="let prod of quotation.productDetails;let j = index">
+                        <td>{{j+1}}</td>
+                        <td>{{prod.productName}}</td>
+                        <td>{{prod.productId}}</td>
+                        <td>{{prod.productUnit}}</td>
+                        <td numeric-column>
+                          {{prod.latestApprovedRate | currency:'INR'}}
+                        </td>
+                        <td numeric-column>
+                          {{prod.productRate | currency:'INR'}}
+                        </td>
+                        <td>
+                          <p *ngFor="let doc of prod.docDetails; let k=index">
+                            <span title="Download {{doc.docName}}" class="txt-elps">
+                              <a href="{{doc.docS3Link}}" download="{{doc.docName}}">{{doc.docName}}</a>
+                            </span>
+                          </p>
+                          <p class="italic-text" *ngIf="!prod.docDetails.length"> No doc available</p>
+                        </td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="border-top: 1px solid #ccc">
+    <div class="col-md-12" style="padding-top: 10px;padding-right: 0px;">
+      <button
+      class="btn btn-danger pull-right"
+      type="button"
+      (click)="onQuotationModalClose()"
+      title="Close"
+      >
+      Close
+      </button>
+    </div>
+  </div>
+</ngx-smart-modal>

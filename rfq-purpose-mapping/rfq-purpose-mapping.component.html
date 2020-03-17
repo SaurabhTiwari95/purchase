@@ -1,0 +1,146 @@
+<section class="content-header">
+  <h2>
+    RFQ Purpose Control
+    <small> Manage </small>
+  </h2>
+</section>
+
+<section class="content" id="popupContainer">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">
+            {{ companyDetails.CompanyFullName }}
+          </h3>
+        </div>
+        <div class="box-body form-content-ang7">
+            <!-- <ui-switch  [(ngModel)]="enable" uncheckedLabel="OFF"
+            checkedLabel="ON" ></ui-switch > -->
+          <form #rfq_purpose_mapping="ngForm">
+            <div class="row">
+              <div class="col-md-12 np-lr">
+                <div class="col-md-6 form-group">
+                  <label>Location</label>
+                  <select name="location"
+                  class="form-control" required [disabled]="disabledButtonAndField" (change)="showMappingTable = false;getAllRfqControlTypes();getUsersForCompanyAndLocation()"
+                  [(ngModel)]="rfqPurposeUserMapping.slctdLocation" >
+                    <option [ngValue]="undefined" disabled
+                      >Select Location</option
+                    >
+                    <option
+                      *ngFor="let location of locations"
+                      [ngValue]="location"
+                    >
+                      {{ location.locationName }} -
+                      {{ location.companyLocationId }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-6 form-group">
+                  <label>Purpose</label>
+                  <ng-select name="purpose" [items]="allPurposes" [(ngModel)]="rfqPurposeUserMapping.slctdPurpose"
+                  [bindLabel]="'rfqPurposeTypeName'" required placeholder="Select Purpose" [disabled]="disabledButtonAndField">
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-12 np-lr">
+                <div class="col-md-12 form-group">
+                  <button type="button" class="btn btn-primary pull-right" col-button-only [disabled]="rfq_purpose_mapping.invalid || disabledButtonAndField" (click)="getAllUsersMappedWithRfqPurpose()">Get Mapped Users</button>
+                </div>
+              </div>
+            </div>
+          </form>
+          <hr class="custom-hr-with-large-width-ang7" *ngIf="showMappingTable" />
+          <div class="row" *ngIf="showMappingTable">
+            <div class="col-md-12 np-lr">
+              <div class="col-md-12 form-group">
+                <h4 class="heading-with-hr" style="padding-bottom: 20px;">Map/Unmap User for {{rfqPurposeUserMapping.slctdPurpose.rfqPurposeTypeName}} 
+                </h4>
+              </div>
+              <div class="col-md-12 form-group">
+                <ngx-datatable
+                class="material"
+                [columnMode]="'flex'"
+                [headerHeight]="50"
+                [footerHeight]="50"
+                [rowHeight]="'auto'"
+                [rows]="rfqPurposeUserMapping.mappedUserDetails"
+                [limit]="10"
+                [displayCheck]="displayCheck"
+                [columnMode]="'force'"
+                [headerHeight]="50"
+                [footerHeight]="50"
+                [rowHeight]="'auto'"
+              >
+                <ngx-datatable-column name="User Name" [minWidth]="200"  [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.userName }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="User Email" [minWidth]="200"  [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.userEmail }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Mapped By" [minWidth]="200"  [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.mappedBy }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Mapped On" [minWidth]="200"  [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.mappedOn }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Action" [minWidth]="100"  [flexGrow]="1">
+                  <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                    <button class="btn btn-default" title="Unmap User" [permissions]="['su', 'F159P111']" (click)="toggleUserMappingWithRfqPurposeType(rowIndex)"><i class="text-danger fa fa-close"></i></button>
+                  </ng-template>
+                </ngx-datatable-column>
+              </ngx-datatable>
+              </div>
+            </div>
+          </div>
+          <div class="box col-md-12 collapse-box-border" style="box-shadow:none;border-top:none;" *ngIf="showMappingTable" >
+            <div class="box-header np-lr">
+              <div class="user-block">
+                <h4 style="margin: 0;">
+                  Map User
+                  <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-toggle="collapse" href="#collapdeBoxForUser" [disabled]="disabledButtonAndField" (click)="mapNewUser()">
+                      <i class="fa fa-plus"></i> Map
+                  </button>
+                  </div>
+                </h4>
+              </div>
+            </div>
+            <div class="box-body np-lr collapse" id="collapdeBoxForUser">
+              <div class="row ">
+                <form #user_form="ngForm" novalidate>
+                  <div class="col-md-12">
+                    <div class="col-md-6 form-group" [ngClass]="{'has-error': userAlreadyAdded}">
+                      <label *ngIf="!userAlreadyAdded">User</label>
+                      <label *ngIf="userAlreadyAdded" class="text-danger">User Already Added</label>
+                      <ng-select name="user" [items]="userDetails" [(ngModel)]="newUser.slctdUser"
+                      [bindLabel]="'userFullName'" placeholder="Select User" [disabled]="disabledButtonAndField" [searchFn]="customSearchFnForUser" required >
+                        <ng-template ng-label-tmp let-item="item">
+                            <span class="ng-value-label">{{item.userFullName}} - {{item.userEmail}}</span>
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item"> {{item.userFullName}} - {{item.userEmail}} </ng-template>
+                      </ng-select>
+                    </div>
+                    <div class="col-md-6 form-group">
+                      <button type="button" class="btn btn-primary pull-right btn-sm" col-button-only (click)="toggleUserMappingWithRfqPurposeType()" [permissions]="['su', 'F159P11_']" [disabled]="disabledButtonAndField || user_form.invalid">Map</button>
+                      <button type="button" class="btn btn-default pull-right btn-sm" style="margin-right: 10px;" col-button-only (click)="mapNewUser()"  data-toggle="collapse" href="#collapdeBoxForUser" [disabled]="disabledButtonAndField">Cancel</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

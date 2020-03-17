@@ -1,0 +1,139 @@
+<div class="row ">
+  <div class="col-md-12">
+    <div class="col-md-12 form-group heading-with-hr">
+      <h4>
+        Revision Details
+        <span class="pull-right" *ngIf="!service.vendorRfqCreate.basicDetails.isUnderCreation && service.vendorRfqCreate.basicDetails.sendToVendorOfLatestVersion">
+          <a (click)="addNewVersion()" [ngClass]="{'disable-link' : service.disabledButtonAndField}"><i class="fa fa-plus"></i> Add Revision</a>
+        </span>
+      </h4>
+    </div>
+    <div class="table-responsive col-md-12 form-group">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th status-column>Select</th>
+            <th>Revision Number</th>
+            <th status-column>Quotation Submitted</th>
+            <th status-column>Approval Status</th>
+            <th>Added By</th>
+            <th>Added On</th>
+            <th status-column>Action</th>
+          </tr>
+        </thead>
+        <tbody all-td-vertical-align-middle>
+          <tr *ngFor="let revision of service.vendorRfqCreate.revisionDetails; let i=index">
+            <td status-column>
+              <div class="icheckbox_flat-green checked" style="position: relative;">
+                <label class="control control--checkbox">
+                  <input type="checkbox" name="isselected" [(ngModel)]="revision.isSelected"  
+                  [disabled]="service.disabledButtonAndField" (change)="selectUnselectRevision(i)"/>
+                  <!-- (change)="service.storeSelectedRevisionIndex(i)" -->
+                  <div class="control__indicator"></div>
+                </label>
+              </div>
+            </td>
+            <td>{{revision.versionNumber}}</td>
+            <td  status-column>
+              <span class="label" [ngClass]="{'label-success' : revision.enteredQuoteDetails.length, 'label-danger' : !revision.enteredQuoteDetails.length}">
+                {{revision.enteredQuoteDetails.length && 'Yes' || 'No'}}
+              </span>
+              <a *ngIf="revision.enteredQuoteDetails.length" style="margin-left: 5px;" [ngClass]="{'disable-link' : service.disabledButtonAndField}" (click)="showQuotationDetails(i)">Click here to see</a>
+            </td>
+            <td status-column>
+              <span class="label" [ngClass]="{'label-success' : revision.isQuoteApproved, 'label-danger': !revision.isQuoteApproved}">
+                  {{revision.isQuoteApproved && 'Approved' || 'Pending'}}
+              </span>
+            </td>
+            <td>
+              {{revision.userName}}
+            </td>
+            <td>{{revision.creationDateTime}}</td>
+            <td status-column>
+              <button type="button" title="Veiw Product and Vendor" class="btn btn-default action-button" [disabled]="service.disabledButtonAndField" [permissions]="['su', 'F152P1__']" (click)="viewProductAndVendorDetails(i)"><i class="fa fa-eye"></i></button>
+              <button type="button" title="Send to Vendor" class="btn btn-default action-button" 
+              *ngIf="!revision.sentToVendors && revision.latestVersion" (click)="sendRfqToVendors(i)" [disabled]="service.disabledButtonAndField" [permissions]="['su', 'F152P11_']"> <i class="fa fa-envelope"></i></button>
+              <button type="button" title="Add Quotation" class="btn btn-default action-button" 
+              *ngIf="revision.sentToVendors && revision.latestVersion && !revision.isQuoteApproved" [disabled]="service.disabledButtonAndField" [permissions]="['su', 'F152P11_']" (click)="goToStep3(i);">
+                <i class="fa fa-share"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="!service.vendorRfqCreate.revisionDetails.length">
+            <td colspan="42">
+              <span class="nothing-found-note">No Data Found</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- <div class="row ">
+  <div class="col-md-12">
+    <div class="col-md-12 form-group ">
+      <h4 class="heading-with-hr">Products</h4>
+    </div>
+    <div class="table-responsive col-md-12 form-group">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="10%">Sl. No.</th>
+            <th width="40%">Product</th>
+            <th width="25%">Unit</th>
+            <th width="25%" numeric-column>Quantity</th>
+          </tr>
+        </thead>
+        <tbody all-td-vertical-align-middle>
+          <tr *ngFor="let prod of service.vendorRfqCreate.productAndVendorDetails.addedProducts; let i=index">
+            <td>{{i+1}}</td>
+            <td>{{prod.slctdProduct.prodDesc}} - {{prod.slctdProduct.productId}}</td>
+            <td>{{prod.slctdProduct.prodUnit}}</td>
+            <td numeric-column>{{prod.quantity | number:'.3-3' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div> -->
+<!-- <div class="row pad-t">
+  <div class="col-md-12">
+    <div class="col-md-12 form-group ">
+      <h4 class="heading-with-hr">Vendor</h4>
+    </div>
+    <div class="table-responsive col-md-12 form-group">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="10%">Sl. No.</th>
+            <th width="65%">Vendor Name</th>
+            <th width="25%">Vendor Id</th>
+          </tr>
+        </thead>
+        <tbody all-td-vertical-align-middle>
+          <tr *ngFor="let prod of service.vendorRfqCreate.productAndVendorDetails.addedVendors; let i=index">
+            <td>{{i+1}}</td>
+            <td>{{prod.slctdVendor.vendorName}}</td>
+            <td>{{prod.slctdVendor.vendorId}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div> -->
+<div class="row">
+  <div class="col-md-12 np-lr">
+    <div class="col-md-6 form-group">
+      <button type="button" class="btn btn-default" col-button-only (click)="goToStep1()" [disabled]="service.disabledButtonAndField">&lt; Prev</button>
+      <button type="button" class="btn btn-danger" style="margin-left: 10px;" *ngIf="service.isInUpdateMode" [disabled]="service.disabledButtonAndField" col-button-only (click)="service.cancelUpdateMode()">
+        Cancel Update Mode
+    </button>
+    </div>
+    <div class="col-md-6 form-group">
+        <!-- <button type="button" class="btn btn-primary pull-right" *ngIf="service.statusCode == 'UC'" [disabled]="service.disabledButtonAndField" col-button-only  (click)="sendRfqToVendors()"><i class="fa fa-envelope"></i> Send to Vendor and Continue &gt;</button> -->
+        <!-- <button type="button" class="btn btn-primary pull-right" [disabled]="service.disabledButtonAndField" col-button-only  (click)="service.vendorRfqCreate.basicDetails.ifPageNum = 3;"> Next &gt;</button> -->
+    </div>
+  </div>
+</div>
+<app-prod-vendor-details></app-prod-vendor-details>
+<app-quotation-details-modal [quotationDetails] = "quotationDetailsForModal" ></app-quotation-details-modal>

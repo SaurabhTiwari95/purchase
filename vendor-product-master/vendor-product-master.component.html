@@ -1,0 +1,48 @@
+<section class="content-header">
+  <h2>
+    Product Master <small>Manage</small>
+  </h2>
+</section>
+<section class="content" id="popupContainer">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">
+            {{ local.companyDetails.CompanyFullName }}
+          </h3>
+        </div>
+        <div class="box-body form-content-ang7">
+
+          <div class="row">
+            <div class="col-md-12 ">
+              <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs with-darker-border">
+                  <li class="active" [permissions]="['su', 'F155P11_']"><a href="#manual_entry_tab" data-toggle="tab"
+                      aria-expanded="true" (click)="resetImportDataOnManualEntry()"
+                      [ngClass]="{'disable-link': local.disableButton }">Manual
+                      Entry
+                    </a></li>
+                  <li class="" [permissions]="['su', 'F155P11_']"><a href="#import_tab" data-toggle="tab"
+                      aria-expanded="false" [ngClass]="{'disable-link': local.disableButton }">Import</a></li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane active" id="manual_entry_tab">
+                    <ng-container>
+                      <app-manual-entry-home></app-manual-entry-home>
+                    </ng-container>
+                  </div>
+                  <div class="tab-pane pad-t" id="import_tab">
+                    <ng-container>
+                      <app-product-master-import></app-product-master-import>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

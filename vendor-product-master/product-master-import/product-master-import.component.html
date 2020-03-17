@@ -1,0 +1,272 @@
+<form #product_master_import="ngForm">
+  <div class="row">
+    <div class="col-md-12 np-lr">
+      <div class="col-md-6 form-group">
+        <h4>
+          Paste Product File
+          <small>
+            <a (click)="getPurchaseProdImportFile()"
+              >( <i class="fa fa-download"></i> Download Format )</a
+            >
+          </small>
+        </h4>
+      </div>
+      <div class="col-md-6 form-group">
+        <button
+          type="button"
+          class="btn btn-danger pull-right"
+          [disabled]="local.disableButton"
+          (click)="resetFileData()"
+        >
+          Reset
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary pull-right"
+          (click)="parseFile()"
+          style="margin-right: 10px;"
+          [disabled]="local.disableButton || !product_master_import.valid"
+        >
+          Parse
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 form-group">
+      <textarea
+        name="pasteFile"
+        class="form-control"
+        rows="10"
+        cols="50"
+        placeholder="Paste Product file here..."
+        [(ngModel)]="local.vendorProductImportObj.fileData"
+        [disabled]="local.vendorProductImportObj.parsedData"
+        required
+      ></textarea>
+    </div>
+  </div>
+  <div class="row">
+    <div
+      class="col-md-12 form-group"
+      *ngIf="local.vendorProductImportObj.parsedData"
+    >
+      <button
+        type="button"
+        class="btn btn-primary pull-right"
+        [disabled]="local.disableButton"
+        (click)="productMasterFileImp()"
+        [permissions]="['su', 'F155P11_']"
+      >
+        Import File
+      </button>
+    </div>
+  </div>
+  <div class="row" *ngIf="local.vendorProductImportObj.parsedData">
+    <div class="col-md-12 form-group">
+      <h4 class="heading-with-hr" style="padding-bottom: 16px;">
+        Parsed File
+        <span class="pull-right"
+          >Total Rows :
+          {{ local.vendorProductImportObj.parsedData.data.length }}</span
+        >
+      </h4>
+    </div>
+    <div class="col-md-12 table-responsive">
+      <table class="table table-bordered table-csv">
+        <tr
+          *ngFor="
+            let data of local.vendorProductImportObj.parsedData.data;
+            let i = index
+          "
+        >
+          <ng-container *ngIf="i == 0">
+            <th *ngFor="let key of data; let j = index">{{ key }}</th>
+          </ng-container>
+          <ng-container *ngIf="i != 0">
+            <!-- && data.length && data[0] -->
+            <td *ngFor="let key of data; let k = index">{{ key }}</td>
+          </ng-container>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="row" *ngIf="local.vendorProductImportObj.errorTitle">
+    <div class="col-md-12 np-lr">
+      <div class="col-md-6">
+        <div class="alert alert-primary np-lr">
+          <h4 class="text-red">
+            <i class="ion-alert-circled"></i>
+            {{ local.vendorProductImportObj.errorTitle }}
+          </h4>
+          <b [innerHTML]="local.vendorProductImportObj.errorContent"></b>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="row"
+    *ngIf="local.vendorProductImportObj.parsedErrorFileFromApi.length"
+  >
+    <div class="col-md-12 form-group">
+      <h4 class="heading-with-hr" style="padding-bottom: 25px;">
+        <span class="pull-right"
+          >Total Rows :
+          {{ local.vendorProductImportObj.parsedErrorFileFromApi.length }}</span
+        >
+      </h4>
+    </div>
+    <div class="col-md-12 form-group">
+      <table class="table table-bordered table-csv">
+        <tr
+          *ngFor="
+            let data of local.vendorProductImportObj.parsedErrorFileFromApi;
+            let i = index
+          "
+          [ngClass]="{ 'error-here': i != 0 }"
+        >
+          <ng-container *ngIf="i == 0">
+            <th *ngFor="let headerKeys of data; let j = index">
+              {{ headerKeys }}
+            </th>
+          </ng-container>
+          <ng-container *ngIf="i != 0">
+            <td>{{ data.prodName }}</td>
+            <td>{{ data.type }}</td>
+            <td>{{ data.prodUnit }}</td>
+            <td>{{ data.hsnCode }}</td>
+            <td>{{ data.serviceReq }}</td>
+            <td>{{ data.groupDesc }}</td>
+            <td>{{ data.isCapital }}</td>
+            <td>{{ data.prodDesc }}</td>
+          </ng-container>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div
+      class="col-md-12 form-group"
+      *ngIf="local.vendorProductImportObj.parsedData"
+    >
+      <button
+        type="button"
+        class="btn btn-primary pull-right"
+        [disabled]="local.disableButton"
+        (click)="productMasterFileImp()"
+        [permissions]="['su', 'F155P11_']"
+      >
+        Import File
+      </button>
+    </div>
+  </div>
+</form>
+
+<ngx-smart-modal #productImportRef identifier="myModalProductImportRef">
+  <div class="row" *ngIf="productDetailsAfterImport.length">
+    <div class="col-md-12">
+      <h4 class="heading-with-hr txt-color">
+        Products Imported Successfully
+      </h4>
+    </div>
+    <div class="col-md-12 np-lr">
+      <div class="col-md-10"></div>
+      <div class="col-md-2 form-group">
+        <input
+          type="text"
+          name="filterunit"
+          class="form-control"
+          placeholder="Search Here..."
+          (input)="searchProductsInImport($event)"
+        />
+      </div>
+    </div>
+    <div class="col-md-12">
+      <ngx-datatable
+        class="material"
+        [columnMode]="'flex'"
+        [headerHeight]="50"
+        [limit]="10"
+        [footerHeight]="50"
+        [rowHeight]="'auto'"
+        [rows]="searchProductSAfterImport"
+        [scrollbarH]="true"
+      >
+        <ngx-datatable-column
+          name="Product Group"
+          [flexGrow]="1"
+          [sortable]="true"
+          prop="groupDesc"
+        >
+          <ng-template
+            let-row="row"
+            let-rowIndex="rowIndex"
+            let-value="value"
+            ngx-datatable-cell-template
+          >
+            {{ row.groupDesc }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="Product"
+          [flexGrow]="1"
+          [sortable]="true"
+          prop="prodName"
+        >
+          <ng-template
+            let-row="row"
+            let-rowIndex="rowIndex"
+            let-value="value"
+            ngx-datatable-cell-template
+          >
+            {{ row.prodName }} - {{ row.prodId }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="Product Unit"
+          [flexGrow]="1"
+          [sortable]="true"
+          prop="prodUnit"
+        >
+          <ng-template
+            let-row="row"
+            let-rowIndex="rowIndex"
+            let-value="value"
+            ngx-datatable-cell-template
+          >
+            {{ row.prodUnit }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="Product Description"
+          [flexGrow]="1.5"
+          [sortable]="true"
+          prop="prodDesc"
+        >
+          <ng-template
+            let-row="row"
+            let-rowIndex="rowIndex"
+            let-value="value"
+            ngx-datatable-cell-template
+          >
+            {{ row.prodDesc }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="HSN Code"
+          [flexGrow]="1"
+          [sortable]="true"
+          prop="hsnCode"
+        >
+          <ng-template
+            let-row="row"
+            let-rowIndex="rowIndex"
+            let-value="value"
+            ngx-datatable-cell-template
+            >{{ row.hsnCode }}
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</ngx-smart-modal>

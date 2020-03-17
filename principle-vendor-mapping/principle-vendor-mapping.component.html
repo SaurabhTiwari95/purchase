@@ -1,0 +1,152 @@
+<section class="content-header">
+  <h2>
+    Principal Vendor Mapping <small>Manage</small>
+  </h2>
+</section>
+<section class="content" id="popupContainer">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">
+            {{ companyDetails.CompanyFullName }}
+          </h3>
+        </div>
+        <div class="box-body form-content-ang7">
+          <form #vendor_map_form="ngForm">
+            <div class="row">
+              <div class="col-md-12 np-lr ">
+                <div class="col-md-4 form-group">
+                  <label>What do you want to do ?</label>
+                  <ng-select name="category" [items]="categories" [bindLabel]="'categoryName'"
+                    placeholder="What do you want to do ? " [(ngModel)]="principleVendorObj.slctdCategory"
+                    [disabled]="disableAllFields" (change)="setWhatToDoDependent();" required>
+                    <ng-template ng-label-tmp let-item="item">
+                      <span>{{item.categoryName}}</span>
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                      <span [ngOptionHighlight]="searchTerm">{{item.categoryName}}</span>
+                    </ng-template>
+                  </ng-select>
+                </div>
+                <div class="col-md-4 form-group"
+                  *ngIf="principleVendorObj.slctdCategory && principleVendorObj.slctdCategory.categoryId == '1'">
+                  <label>Principal Vendor Name <small class="italic-text">( Min 3 Characters Required
+                      )</small></label>
+                  <div class="input-group-btn">
+                    <input type="text" class="form-control searchBox" placeholder="Enter Principal Vendor Name Here..."
+                      name="search2" minlength="3" [(ngModel)]="principleVendorObj.principalVendor"
+                      (input)="checkIfValidVendorName($event)" [disabled]="disableAllFields" required>
+                  </div>
+                </div>
+                <div class="col-md-4 form-group"
+                  *ngIf="principleVendorObj.slctdCategory && principleVendorObj.slctdCategory.categoryId == '2'">
+                  <label>Principal Vendor</label>
+                  <ng-select name="vendor" [items]="principalVendorsDetails" [bindLabel]="'principalVendorName'"
+                    placeholder="What do you want to do ? " [(ngModel)]="principleVendorObj.slctdPrincipalVendor"
+                    [searchFn]="customSearchFnForPrincipalVendor" [disabled]="disableAllFields"
+                    (change)="resetPrincipalVendorDependent();" required>
+                    <ng-template ng-label-tmp let-item="item">
+                      <span>{{item.principalVendorName}}</span> |
+                      <span>{{item.principalVendorId}}</span>
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                      <span [ngOptionHighlight]="searchTerm">{{item.principalVendorName}}</span> |
+                      <span [ngOptionHighlight]="searchTerm">{{item.principalVendorId}}</span>
+                    </ng-template>
+                  </ng-select>
+                </div>
+                <div class="col-md-4"
+                  *ngIf="principleVendorObj.slctdCategory && principleVendorObj.slctdCategory.categoryId == '2'">
+                  <button type="button" class=" btn btn-primary pull-right" col-button-only
+                    (click)="getPrincipalVendorMapped();" [disabled]="vendor_map_form.invalid || disableAllFields">Get
+                    Mapped Vendors</button>
+                </div>
+              </div>
+            </div>
+          </form>
+          <hr class=" custom-hr-with-large-width-ang7" *ngIf="principleVendorObj.slctdCategory">
+          <div class="row" *ngIf="principleVendorObj.slctdCategory">
+            <div class="col-md-12" style="padding-bottom: 10px;">
+              <h4 class="heading-with-hr">Mapped Vendor Details</h4>
+            </div>
+            <div class="col-md-12">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th status-column style="width: 7%;">Select</th>
+                    <th style="width: 80%;">Vendor</th>
+                    <th status-column style="width:15%">Action</th>
+                  </tr>
+                </thead>
+                <tbody all-td-vertical-align-middle>
+                  <tr *ngFor="let vendor of mappedVendorsDetailsObj.customerDetails, let i = index">
+                    <td style="width: 7%;" status-column>
+                      {{i + 1}}
+                    </td>
+                    <td style="width: 80%;">{{vendor.custName}} | {{vendor.custId}}</td>
+                    <td style="width:15%" status-column>
+                      <button type="button" class="btn btn-danger del-btn"
+                        (click)="deleteVendorToPrinciVendorMapping(i)" title="Delete/Unmap Vendor"
+                        [permissions]="['su', 'F171P1_1']"><i class="fa fa-trash "></i></button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="mappedVendorsDetailsObj.customerDetails.length == 0">
+                    <td colspan="42" class="nothing-found-note">No Data Found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-12 np-lr" *ngIf="principleVendorObj.slctdCategory">
+            <div class="box customer-box" style="box-shadow:none;border-top:none;margin-bottom:0px;">
+              <div class="box-header np-lr">
+                <div class="user-block">
+                  <h4 style="margin:0;">
+                    Map New Vendor
+                    <div class="box-tools pull-right">
+                      <button type="button" class="btn btn-box-tool" data-toggle="collapse" data-target="#collapse1"
+                        [disabled]="!isValidPrincipalVendor || disableAllFields" (click)="reseDataOnMapVendorBtn();"><i
+                          class="fa fa-plus"></i>
+                        Map Vendor
+                      </button>
+                    </div>
+                  </h4>
+                </div>
+              </div>
+              <div class="box-body np-lr collapse" id="collapse1">
+                <form #add_vendor_mapping="ngForm">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="col-md-6 form-group">
+                        <label>Vendor</label>
+                        <ng-select name="vendor" [items]="allUnmappedVendors" [bindLabel]="vendorName"
+                          [(ngModel)]="principleVendorObj.slctdVendor" [searchFn]="customSearchFnForVendor"
+                          placeholder="Select Vendor Name ~ Vendor Id " [disabled]="disableAllFields" required>
+                          <ng-template ng-label-tmp let-item="item">
+                            <span>{{item.vendorName}}</span> |
+                            <span>{{item.vendorId}}</span>
+                          </ng-template>
+                          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                            <span [ngOptionHighlight]="searchTerm">{{item.vendorName}}</span> |
+                            <span [ngOptionHighlight]="searchTerm">{{item.vendorId}}</span>
+                          </ng-template>
+                        </ng-select>
+                      </div>
+                      <div class="col-md-6 form-group">
+                        <button type="button" class="btn btn-primary pull-right" (click)="mapVendorToPrincipalVendor();"
+                          [disabled]=" !add_vendor_mapping.valid" col-button-only data-toggle="collapse"
+                          data-target="#collapse1" [disabled]="disableAllFields" [permissions]="['su', 'F171P11_']">Map
+                          Vendor</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

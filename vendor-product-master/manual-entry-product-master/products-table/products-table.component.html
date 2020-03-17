@@ -1,0 +1,111 @@
+<hr class="custom-hr-with-large-width-ang7">
+<div class="row">
+  <div class="col-md-12">
+    <h4 class="heading-with-hr">Product Details
+      <span class="pull-right">Total Products : <span
+          class="italic-text">{{local.filteredProductDetails.length}}</span></span>
+    </h4>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12 np-lr">
+    <div class="col-md-10"></div>
+    <div class="col-md-2 form-group">
+      <input type="text" name="filterunit" class="form-control" placeholder="Search Here..."
+        (input)="filterProductsDatatable($event);">
+    </div>
+  </div>
+  <div class="col-md-12">
+    <ngx-datatable class="material" [columnMode]="'flex'" [headerHeight]="50" [limit]="10" [footerHeight]="50"
+      [rowHeight]="'auto'" [rows]="local.filteredProductDetails" [scrollbarH]="true">
+      <ngx-datatable-column name="Product Id" [flexGrow]="1" [sortable]="true" prop="prodId">
+        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+          <span *ngIf="row.prodId">{{row.prodId }}</span>
+          <span *ngIf="!row.prodId" class="italic-text">Not Available</span>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Product Name" [flexGrow]="1" [sortable]="true" prop="productName">
+        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+          <span *ngIf="row.productName">{{row.productName }}</span>
+          <span *ngIf="!row.productName" class="italic-text">Not Available</span>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Product Group" [flexGrow]="1" [sortable]="true" prop="GrpDesc">
+        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+          <span *ngIf="row.slctdProductGroup">{{row.slctdProductGroup.GrpDesc }}</span>
+          <span *ngIf="row.slctdProductGroup == null" class="italic-text">Not Available</span>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="" [flexGrow]="1" [sortable]="true" prop="productStatus">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          <div class="datatable-header-cell-template-wrap" style="
+                                    text-align: center;">
+            <span>Product Status</span>
+          </div>
+        </ng-template>
+        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+          <div class="datatable-header-cell-template-wrap" style="text-align: center;">
+            <span class="label" [ngClass]="{ 
+                'label-danger' : row.productStatus === 'Expired' ,
+                'label-success' : row.productStatus === 'Active' } ">
+              {{row.productStatus}}
+            </span>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Created By" [flexGrow]="1.5" [sortable]="true" prop="createdBy">
+        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+          <span *ngIf="row.createdBy">{{row.createdBy }}</span>
+          <span *ngIf="row.createdBy == null" class="italic-text">Not Available</span>
+          <div class="italic-text">{{row.createdByEmail}}</div>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Created At" [flexGrow]="1" [sortable]="true" prop="createdAt">
+        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+          <span *ngIf="row.createdAt">{{row.createdAt }}</span>
+          <span *ngIf="row.createdAt == null" class="italic-text">Not Available</span>
+        </ng-template>
+      </ngx-datatable-column>
+
+
+      <!-- <ngx-datatable-column name="Product Unit" [flexGrow]="1" [sortable]="true" prop="productSpecUnitShortName">
+        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+          <span *ngIf="row.slctdUnitOfMeasurement ">{{row.slctdUnitOfMeasurement.productSpecUnitShortName }}</span>
+          <span *ngIf="row.slctdUnitOfMeasurement == null" class="italic-text">Not Available</span>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Product Description" [flexGrow]="1.5" [sortable]="true" prop="productDescription">
+        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+          <span *ngIf="row.productDescription">{{row.productDescription}}</span>
+          <span *ngIf="!row.productDescription" class="italic-text">Not Available</span>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="HSN Code - GST Percent" [flexGrow]="1" [sortable]="true" prop="hsnCode">
+        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+          <span *ngIf=" row.slctdHsnCode && row.slctdHsnCode">{{row.slctdHsnCode.hsnCode }} -
+            {{row.slctdHsnCode.gstRatePercent}}</span>
+          <span *ngIf="row.slctdHsnCode == null && row.slctdHsnCode == null" class="italic-text">Not
+            Available</span>
+        </ng-template>
+      </ngx-datatable-column> -->
+      <ngx-datatable-column [flexGrow]="0.5">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          <div class="datatable-header-cell-template-wrap" style="
+                text-align: center;">
+            <span>Action</span>
+          </div>
+        </ng-template>
+        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+          <div class="datatable-header-cell-template-wrap" style="
+              text-align: center;">
+            <span>
+              <button type="button" class="btn btn-default" title="Edit Product Details"
+                (click)="editProductDetails(row);" [disabled]="local.disableButton"
+                [permissions]="['su', 'F155P11_']"><i class="fa fa-edit"></i></button>
+            </span>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+  </div>
+</div>

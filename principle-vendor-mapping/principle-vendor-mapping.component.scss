@@ -1,0 +1,19 @@
+.vendor {
+  padding: 22px;
+}
+
+.customer-box .box-header + .box-body {
+  border-top: solid 1px #ccc;
+}
+
+.searchBox {
+  height: 36px;
+}
+
+.del-btn:hover {
+  transform:scale(1.1);
+}
+
+h4 {
+  margin: 1rem 0rem 1rem;
+}

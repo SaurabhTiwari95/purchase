@@ -1,0 +1,46 @@
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+
+import { PurchaseRoutingModule } from "./purchase-routing.module";
+import { PurchaseHomeComponent } from "./purchase-home/purchase-home.component";
+import { MatDialogModule } from "@angular/material";
+import { SharedServiceModuleModule } from "src/app/shared/modules/shared-service-module/shared-service-module.module";
+import { IndentReportComponent } from './indent-report/indent-report.component';
+import { VendorRfqComponent } from './vendor-rfq/vendor-rfq.component';
+import { AddProductAndVendorComponent } from './vendor-rfq/create-update-vendor-rfq/add-product-and-vendor/add-product-and-vendor.component';
+import { SendToVendorComponent } from './vendor-rfq/create-update-vendor-rfq/send-to-vendor/send-to-vendor.component';
+import { QuotationAndApprovalComponent } from './vendor-rfq/create-update-vendor-rfq/quotation-and-approval/quotation-and-approval.component';
+import { VendorProductMasterComponent } from './vendor-product-master/vendor-product-master.component';
+import { ProductMasterImportComponent } from './vendor-product-master/product-master-import/product-master-import.component';
+import { CreateProductComponent } from './vendor-product-master/manual-entry-product-master/create-product/create-product.component';
+import { ManualEntryHomeComponent } from './vendor-product-master/manual-entry-product-master/manual-entry-home/manual-entry-home.component';
+import { RfqApprovalModalComponent } from './vendor-rfq/create-update-vendor-rfq/quotation-and-approval/rfq-approval-modal/rfq-approval-modal.component';
+import { ProductsTableComponent } from './vendor-product-master/manual-entry-product-master/products-table/products-table.component';
+import { ProdVendorDetailsComponent } from './vendor-rfq/create-update-vendor-rfq/send-to-vendor/prod-vendor-details/prod-vendor-details.component';
+import { QuotationDetailsModalComponent } from './vendor-rfq/create-update-vendor-rfq/send-to-vendor/quotation-details-modal/quotation-details-modal.component';
+@NgModule({
+  declarations: [
+    PurchaseHomeComponent,
+    IndentReportComponent,
+    VendorRfqComponent,
+    AddProductAndVendorComponent,
+    SendToVendorComponent,
+    QuotationAndApprovalComponent,
+    VendorProductMasterComponent,
+    ProductMasterImportComponent,
+    CreateProductComponent,
+    ManualEntryHomeComponent,
+    RfqApprovalModalComponent,
+    ProductsTableComponent,
+    ProdVendorDetailsComponent,
+    QuotationDetailsModalComponent
+  ],
+  imports: [
+    CommonModule,
+    PurchaseRoutingModule,
+    MatDialogModule,
+    SharedServiceModuleModule
+  ],
+  entryComponents: []
+})
+export class PurchaseModule { }

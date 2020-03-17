@@ -1,0 +1,298 @@
+<section class="content-header">
+  <h2>
+    Indent
+    <small> Report </small>
+  </h2>
+</section>
+
+<section class="content" id="popupContainer">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">
+            {{ companyDetails.CompanyFullName }}
+          </h3>
+        </div>
+        <div class="box-body form-content-ang7">
+          <form #indent_report="ngForm">
+            <div class="row">
+              <div class="col-md-12 np-lr">
+                <div class="col-md-6 form-group">
+                  <label>Location</label>
+                  <select name="location"
+                  class="form-control" required [disabled]="disabledButtonAndField" (change)="showReportTable = false"
+                  [(ngModel)]="indentReport.slctdLocation" >
+                    <option [ngValue]="undefined" disabled
+                      >Select Location</option
+                    >
+                    <option
+                      *ngFor="let location of locations"
+                      [ngValue]="location"
+                    >
+                      {{ location.locationName }} -
+                      {{ location.companyLocationId }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-6 form-group">
+                  <label>Report Type</label>
+                  <select class="form-control" name="reporttype" required 
+                  [(ngModel)]="indentReport.slctdReportType" [disabled]="disabledButtonAndField" (change)="showReportTable = false">
+                    <option [ngValue]="undefined" disabled>Select Report Type</option>
+                    <option
+                      *ngFor="let report of indentReport.reportTypes"
+                      [ngValue]="report"
+                    >
+                      {{ report.reportName}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-12 np-lr">
+                  <div class="col-md-6 form-group">
+                      <label>Indent Date Range</label>
+                      <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                        <input type="text" class="form-control" [disabled]="disabledButtonAndField" name="daterangeInput" required daterangepicker [options]="options" (selected)="selectedDate($event, daterange)" />
+                      </div>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <button type="button" class="btn btn-primary pull-right" 
+                    col-button-only (click)="getDataForView()"
+                    [disabled]="disabledButtonAndField || indent_report.invalid">
+                    View Data
+                  </button>
+                  </div>
+              </div>
+            </div>
+          </form>
+          <hr class="custom-hr-with-large-width-ang7" *ngIf="showReportTable" />
+          <div class="row" *ngIf="showReportTable">
+            <div class="col-md-12 np-lr">
+              <div class="col-md-12 form-group">
+                <h4 class="heading-with-hr" style="padding-bottom: 20px;">{{indentReport.slctdReportType.reportName}}
+                  <span><button type="button" class="btn btn-primary pull-right" (click)="downloadCSV()">Download CSV</button></span>
+                </h4>
+              </div>
+              <!-- <div class="col-md-12 form-group" *ngIf="indentReport.slctdReportType.reportId == 1">
+                  <ngx-datatable
+                  class="material"
+                  [columnMode]="'flex'"
+                  [headerHeight]="50"
+                  [footerHeight]="50"
+                  [rowHeight]="'auto'"
+                  [rows]="indentReport.reportDetails.data"
+                  [limit]="10"
+                  [displayCheck]="displayCheck"
+                  [columnMode]="'force'"
+                  [headerHeight]="50"
+                  [footerHeight]="50"
+                  [rowHeight]="'auto'"
+                  [scrollbarH]="true"
+                >
+                  <ngx-datatable-column name="Purpose Name" [minWidth]="200"  [flexGrow]="2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.purposename }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Business Award Id"  [minWidth]="200" [flexGrow]="2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.businessAwardId }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Capital Equipment Name"  [minWidth]="200" [flexGrow]="2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.capitalEquipmentName }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="PL Sub Group/Ledger"  [minWidth]="200" [flexGrow]="2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.plSubGroupOrLedger }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="PL Group"  [minWidth]="200" [flexGrow]="2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.plGroup }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Product Id"  [minWidth]="200" [flexGrow]="2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.productId }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Product Name"  [minWidth]="200" [flexGrow]="2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.productName }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Quantity"  [minWidth]="200" [flexGrow]="2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.quantity }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Product Rate"  [minWidth]="200" [flexGrow]="2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.productRate }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Is Approved"  [minWidth]="100" [flexGrow]="2">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <p
+                      [ngClass]="{'text-danger':row.isApproved == 'N','text-success':row.isApproved == 'Y'}"
+                    >
+                    {{ row.isApproved == 'N' && 'Not Approved' || 'Approved' }}
+                    </p>
+                      
+                    </ng-template>
+                  </ngx-datatable-column>
+                </ngx-datatable>
+                </div> -->
+              <div class="col-md-12 form-group" *ngIf="indentReport.slctdReportType.reportId == 2">
+                <ngx-datatable
+                class="material"
+                [columnMode]="'flex'"
+                [headerHeight]="50"
+                [footerHeight]="50"
+                [rowHeight]="'auto'"
+                [rows]="indentReport.reportDetails.data"
+                [limit]="10"
+                [displayCheck]="displayCheck"
+                [columnMode]="'force'"
+                [headerHeight]="50"
+                [footerHeight]="50"
+                [rowHeight]="'auto'"
+                [scrollbarH]="true"
+              >
+                <ngx-datatable-column name="Purpose Name" [minWidth]="200"  [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.purposename }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Business Award Id"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.businessAwardId }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Part Name"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.partName }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Part Number"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.partNumber }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Model Name"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.modelName }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Capital Equipment Name"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.capitalEquipmentName }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="PL Sub Group/Ledger"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.plSubGroupOrLedger }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="PL Group"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.plGroup }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Product Id"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.productId }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Product Name"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.productName }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Quantity"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.quantity }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Product Rate"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                   <i class="fa fa-inr"></i> {{ row.productRate }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Product Amount"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <i class="fa fa-inr"></i> {{ row.productAmount }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Indent Date"  [minWidth]="200" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.indentDate }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Is Approved"  [minWidth]="100" [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                      <p
+                    [ngClass]="{'text-danger':row.isApproved == 'N','text-success':row.isApproved == 'Y'}"
+                  >
+                  {{ row.isApproved == 'N' && 'Not Approved' || 'Approved' }}
+                  </p>
+                  </ng-template>
+                </ngx-datatable-column>
+              </ngx-datatable>
+              </div>
+              <div class="col-md-12 form-group" *ngIf="indentReport.slctdReportType.reportId == 3">
+                <ngx-datatable
+                class="material"
+                [columnMode]="'flex'"
+                [headerHeight]="50"
+                [footerHeight]="50"
+                [rowHeight]="'auto'"
+                [rows]="indentReport.reportDetails.data"
+                [limit]="10"
+                [displayCheck]="displayCheck"
+                [columnMode]="'force'"
+                [headerHeight]="50"
+                [footerHeight]="50"
+                [rowHeight]="'auto'"
+                [scrollbarH]="true"
+              >
+                <ngx-datatable-column name="Approver Name" [minWidth]="300"  [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.approverName }}<br>
+                    ( {{ row.approverEmail }} )
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Total Indent Approved" [minWidth]="200"  [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.totalIndentApproved }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Approved Indent Total Amount" [minWidth]="200"  [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <i class="fa fa-inr"></i> {{ row.approvedIndentTotalAmount }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Turn around time( in hours )" [minWidth]="200"  [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.turnAroundTimeInHours }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Turn around time( in minutes )" [minWidth]="200"  [flexGrow]="2">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.turnAroundTimeInMinutes }}
+                  </ng-template>
+                </ngx-datatable-column>
+              </ngx-datatable>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

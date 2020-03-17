@@ -1,0 +1,401 @@
+<hr class="custom-hr-with-large-width-ang7" />
+<form #create_product="ngForm">
+  <div class="row">
+    <div class="col-md-12 form-group">
+      <h4 class="heading-with-hr">
+        {{
+          (local.isProductEditMode && "Update Product Details") ||
+            "New Product Creation"
+        }}
+        <span *ngIf="local.slctdProdRowObj && local.isProductEditMode"
+          >of Product Id :
+          <span class="italic-text">{{
+            local.slctdProdRowObj.prodId
+          }}</span></span
+        >
+        <span
+          class="pull-right"
+          *ngIf="local.isProductEditMode"
+          style="margin: -22px;margin-right: 3px;"
+        >
+          <h4>
+            Product Status :
+            <span
+              class="italic-text label"
+              [ngClass]="{
+                'expire-color':
+                  local.slctdProdRowObj.productStatus == 'Expired',
+                'active-color': local.slctdProdRowObj.productStatus == 'Active'
+              }"
+              style="margin-right: 10px;"
+              >{{ local.slctdProdRowObj.productStatus }}</span
+            >
+            <ui-switch
+              name="expireoracyiveprod"
+              title="Change Product Status"
+              (change)="expirePurchasableProduct()"
+              [(ngModel)]="local.slctdProdRowObj.isProductActive"
+              style="margin-bottom: -5px;"
+              [permissions]="['su', 'F155P11_']"
+              *ngIf="local.userCanUpdateProductDetails.hasPermToCreateOrModify"
+            >
+            </ui-switch>
+          </h4>
+        </span>
+      </h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 np-lr">
+      <div class="col-md-4 form-group">
+        <label>Product Group</label>
+        <ng-select
+          name="productgroup"
+          [items]="local.productGroupDetails"
+          [bindLabel]="'GrpDesc'"
+          [(ngModel)]="local.productCreationObj.slctdProductGroup"
+          [searchFn]="customSearchFnForProductGroup"
+          placeholder="Select Product Group"
+          required
+          [disabled]="
+            (local.isProductEditMode &&
+              !local.userCanUpdateProductDetails.hasPermToCreateOrModify) ||
+            local.disableButton
+          "
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <span>{{ item.GrpDesc }}</span> -
+            <span>{{ item.GroupId }}</span>
+          </ng-template>
+          <ng-template
+            ng-option-tmp
+            let-item="item"
+            let-index="index"
+            let-search="searchTerm"
+          >
+            <span [ngOptionHighlight]="search">{{ item.GrpDesc }}</span> -
+            <span [ngOptionHighlight]="search">{{ item.GroupId }}</span>
+          </ng-template>
+        </ng-select>
+      </div>
+      <div
+        class="col-md-4 form-group"
+        [ngClass]="{ 'has-error': invalidProductNameLength }"
+      >
+        <label *ngIf="!invalidProductNameLength">Product Name</label>
+        <label *ngIf="invalidProductNameLength">
+          Max Product Name Length can be 100</label
+        >
+        <input
+          type="text"
+          name="productname"
+          class="form-control"
+          [(ngModel)]="local.productCreationObj.productName"
+          placeholder="Enter Product Name"
+          (input)="checkIfValidProductNameLength($event)"
+          [disabled]="
+            local.disableButton ||
+            (local.isProductEditMode &&
+              !local.userCanUpdateProductDetails.hasPermToCreateOrModify)
+          "
+          required
+        />
+      </div>
+      <div class="col-md-4 form-group">
+        <label>Unit of Measurement</label>
+        <div class="input-group">
+          <ng-select
+            name="unitofmeasurement"
+            [items]="local.measurmentUnitDetails"
+            [bindLabel]="'productSpecUnitShortName'"
+            [(ngModel)]="local.productCreationObj.slctdUnitOfMeasurement"
+            placeholder="Select Unit of Measurement"
+            [disabled]="local.disableButton"
+            required
+          >
+            <ng-template ng-label-tmp let-item="item">
+              <span>{{ item.productSpecUnitShortName }}</span>
+            </ng-template>
+            <ng-template
+              ng-option-tmp
+              let-item="item"
+              let-index="index"
+              let-search="searchTerm"
+            >
+              <span [ngOptionHighlight]="search">{{
+                item.productSpecUnitShortName
+              }}</span>
+            </ng-template>
+          </ng-select>
+          <div class="input-group-addon">
+            <button
+              type="button"
+              class="btn btn-default"
+              (click)="createUpdateUnitOfMeasurement()"
+              title="Create/Update Unit of Mearsurement"
+              style="line-height: 0.428571;padding: 7px 9px;"
+              [disabled]="local.disableButton"
+            >
+              <i class="fa fa-edit"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 np-lr">
+      <div
+        class="col-md-4 form-group"
+        [ngClass]="{ 'has-error': invalidProdDescLength }"
+      >
+        <label *ngIf="!invalidProdDescLength">Product Description </label>
+        <label *ngIf="invalidProdDescLength"
+          >Max Product Description Length can be 100</label
+        >
+        <textarea
+          rows="2"
+          cols="75"
+          type="text"
+          name="prouctdescription"
+          class="form-control"
+          placeholder="Enter Product Description Here..."
+          [(ngModel)]="local.productCreationObj.productDescription"
+          (input)="checkIfProductDescValidLength($event)"
+          [disabled]="
+            local.disableButton ||
+            (local.isProductEditMode &&
+              !local.userCanUpdateProductDetails.hasPermToCreateOrModify)
+          "
+          required
+        ></textarea>
+      </div>
+      <div class="col-md-4 form-group">
+        <label>HSN Code - GST Rate Percent</label>
+        <ng-select
+          name="hsncode"
+          [items]="local.bufferHsnCodeDetails"
+          [virtualScroll]="true"
+          [loading]="local.loading"
+          (scroll)="onScroll($event)"
+          (scrollToEnd)="onScrollToEnd()"
+          [bindLabel]="'hsnId'"
+          [(ngModel)]="local.productCreationObj.slctdHsnCode"
+          [searchFn]="customSearchFnForHsnCode"
+          placeholder="Select HSN Code - HSN Description -  GST Rate Percent"
+          [disabled]="local.disableButton"
+          required
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <span>{{ item.hsnCode }}</span> -
+            <span>{{ item.gstRatePercent }}</span> -
+            <span>{{ item.hsnDescription }}</span> -
+          </ng-template>
+          <ng-template
+            ng-option-tmp
+            let-item="item"
+            let-index="index"
+            let-search="searchTerm"
+          >
+            <span [ngOptionHighlight]="search">{{ item.hsnCode }}</span> -
+            <span [ngOptionHighlight]="search">{{ item.gstRatePercent }}</span>
+            -
+            <span [ngOptionHighlight]="search">{{ item.hsnDescription }}</span>
+          </ng-template>
+        </ng-select>
+      </div>
+      <div class="form-group col-md-2 " style="margin-top: 26px;">
+        <div class="input-group checkbox-only">
+          <div class="input-group-addon disable-checked-icheck">
+            <div
+              class="icheckbox_flat-green checked"
+              style="position: relative;"
+            >
+              <label class="control control--checkbox">
+                <input
+                  type="checkbox"
+                  name="iscapitalproduct"
+                  [checked]="local.productCreationObj.isCapitalProduct"
+                  [disabled]="local.disableButton"
+                  (input)="checkIfCapitalProdActive($event)"
+                />
+                <div class="control__indicator"></div>
+              </label>
+            </div>
+          </div>
+          <span class="form-control">Is Capital Product ?</span>
+        </div>
+      </div>
+      <div class="form-group col-md-2 " style="margin-top: 26px;">
+        <div class="input-group checkbox-only">
+          <div class="input-group-addon disable-checked-icheck">
+            <div
+              class="icheckbox_flat-green checked"
+              style="position: relative;"
+            >
+              <label class="control control--checkbox">
+                <input
+                  type="checkbox"
+                  name="isservicerequired"
+                  [checked]="local.productCreationObj.isServiceRequired"
+                  [disabled]="local.disableButton"
+                  (input)="checkIfServiceProdActive($event)"
+                />
+                <div class="control__indicator"></div>
+              </label>
+            </div>
+          </div>
+          <span class="form-control">Is Service Required ?</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<form class="image_uploading" novalidate>
+  <div class="row">
+    <div
+      class="box col-md-12"
+      style="box-shadow:none;border-top:none;margin-bottom:0px;"
+    >
+      <div class="box-header  with-border  np-lr">
+        <div class="user-block">
+          <h4 style="margin: 0;">
+            Upload Document(s) <small class="italic-text"> ( Optional )</small>
+            <div class="box-tools pull-right">
+              <button
+                type="button"
+                class="btn btn-box-tool"
+                data-toggle="collapse"
+                href="#collaspdBoxForUploadImage"
+                [disabled]="local.disableButton"
+              >
+                <i class="fa fa-plus"></i>
+                Add Document(s)
+              </button>
+            </div>
+          </h4>
+        </div>
+      </div>
+      <div class="box-body np-lr collapse" id="collaspdBoxForUploadImage">
+        <div class="row">
+          <div class="col-md-4 form-group">
+            <label>Select Document</label>
+            <input
+              type="file"
+              multiple
+              name="imageupload"
+              class="form-control"
+              (input)="convertToBase64UploadProductImages($event)"
+              [disabled]="local.disableButton"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="col-md-12 np-lr form-group"
+      *ngIf="!local.productCreationObj.uploadedProductImages.length"
+    >
+      <p class="nothing-found-note">No Document(s) have been added yet.</p>
+    </div>
+    <div
+      class="col-md-12"
+      *ngIf="local.productCreationObj.uploadedProductImages.length"
+    >
+      <div
+        *ngFor="
+          let url of local.productCreationObj.uploadedProductImages;
+          let i = index
+        "
+        style="display: inline-block;padding-right: 30px;padding-top: 30px"
+      >
+        <div *ngIf="(url.documentS3Link && !url.isDeleted) || url.base64">
+          <img
+            src="{{
+              (url.documentS3Link && !url.isDeleted && url.documentS3Link) ||
+                (url.base64 && 'data:image/png;base64,' + url.base64)
+            }}"
+            class="rounded mb-3"
+            width="250"
+            height="250"
+          />
+          <i
+            role="button"
+            title="Delete Document"
+            (click)="deleteProductImage(i)"
+            class="fa fa-close pull-right text-red"
+            style="position: absolute;"
+          ></i>
+          <a
+            download="{{ url.documentName }}"
+            href="{{ url.documentS3Link }}"
+            *ngIf="url.documentS3Link && !url.isDeleted"
+            ><i
+              title="Download Image"
+              class="fa fa-download pull-right text-primary"
+              style="position: absolute;top: 50px;"
+            ></i
+          ></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<div class="row">
+  <div class="col-md-12">
+    <button
+      type="button"
+      class="btn btn-danger"
+      col-button-only
+      *ngIf="local.isProductEditMode"
+      [disabled]="local.disableButton"
+      (click)="cancelUpdateMode()"
+    >
+      Cancel Update Mode
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-default pull-right"
+      col-button-only
+      [disabled]="local.disableButton"
+      *ngIf="!local.isProductEditMode"
+      (click)="resetProdCreationFields()"
+      style="margin-left : 10px;"
+    >
+      Reset
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-primary pull-right"
+      col-button-only
+      [disabled]="
+        create_product.invalid ||
+        local.disableButton ||
+        local.btnDisablingOnError
+      "
+      (click)="createUpdateProduct()"
+      [permissions]="['su', 'F155P11_']"
+    >
+      {{ (local.isProductEditMode && "Update") || "Create" }} Product
+    </button>
+  </div>
+</div>
+<ngx-smart-modal
+  #myModalUnitRef
+  identifier="myModalUnitOfMeasurement"
+  (onClose)="resetmodalDataOnClose()"
+>
+  <app-unit-of-measurement-modal
+    [filterDataOfUnitOfMeasurement]="local.filterDataOfUnitOfMeasurement"
+    [btnDisablingOnError]="local.btnDisablingOnError"
+    [unitOfMeasurementObj]="local.unitOfMeasurementObj"
+    [isUnitOfMeasurementUpdateMode]="local.isUnitOfMeasurementUpdateMode"
+    [measurmentUnitDetails]="local.measurmentUnitDetails"
+    [slctdUnit]="local.productCreationObj.slctdUnitOfMeasurement"
+    [productCreationObj]="local.productCreationObj"
+    (measurmentUnitDetailsChange)="changeMeasurementUnitDetails($event)"
+  >
+  </app-unit-of-measurement-modal>
+</ngx-smart-modal>

@@ -1,0 +1,40 @@
+::ng-deep .nsm-dialog{
+    max-width: unset !important;
+    overflow-y: initial !important;
+    width: calc(100% - 20px) !important;
+}
+
+::ng-deep .overlay.nsm-overlay-open{
+    overflow: hidden !important;
+    padding-left: 0px !important;
+}
+
+::ng-deep .nsm-body .body{
+    min-height: 65vh !important;
+    max-height: 76vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+.btn-with-outline-only {
+    border: 2px solid black;
+    background-color: white;
+    color: #555;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.primary {
+  border-color: #117776;
+  color: 3c8dbc;
+}
+.primary:hover {
+    background-color: #2e9694;
+    color: white;
+}
+
+.table-csv > thead > tr > th,
+.table-csv > tbody > tr > th,
+.table-csv > tfoot > tr > th{
+  border: 1px solid #7b97a7 !important;
+  color: #fff;
+}

@@ -1,0 +1,232 @@
+<section class="content-header">
+  <h2>
+    Debit/Credit
+    <small>Note</small>
+  </h2>
+</section>
+<section class="content" id="popupContainer">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">
+            {{ service.companyDetails.CompanyFullName }}
+          </h3>
+        </div>
+        <div class="box-body form-content-ang7">
+          <form #arrear="ngForm">
+            <div class="row">
+              <div class="col-md-12 form-group np-lr">
+                <div class="col-md-6 ">
+                  <label>Location</label>
+                  <ng-select [(ngModel)]="service.manualDrCrObj.slctdLocation" [bindLabel]="'locationName'"
+                    [disabled]="service.disabledButtonAndField"
+                    [items]="locations" name="location"
+                    placeholder="Select Location" (change) = "getAllLedgers();" required>
+                    <ng-template let-item="item" ng-label-tmp="ng-label-tmp">
+                      <span>
+                        {{ item.locationName }}
+                      </span> -
+                      <span>
+                        {{ item.companyLocationId }}
+                      </span>
+                    </ng-template>
+                    <ng-template let-index="index" let-item="item" let-search="searchTerm"
+                      ng-option-tmp="ng-option-tmp">
+                      <span [ngOptionHighlight]="search">
+                        {{ item.locationName }}</span>
+                      -
+                      <span [ngOptionHighlight]="search">
+                        {{ item.companyLocationId }}</span>
+                    </ng-template>
+                  </ng-select>
+                </div>
+                <div class="col-md-6">
+                  <label>Select Ledger Category</label>
+                  <ng-select name="ledgerCategory" [items]="service.manualDrCrObj.ledgerCategory"
+                    [(ngModel)]="service.manualDrCrObj.slctdLedgerCategory" [bindLabel]="'ledgerName'"
+                    placeholder="Select Ledger Category"
+                    [disabled]="service.disabledButtonAndField"
+                    (change)="resetDependentFieldsOnVendorName();"
+                    required>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-12 form-group np-lr">
+                <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory)">
+                <label>Select Date
+                  <small class="italic-text">( DD/MM/YYYY )</small>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-addon trigger" [owlDateTimeTrigger]="drcrdate">
+                    <i class="fa fa-calendar"></i>
+                    <input style="width: 0px;height: 0px;padding: 0;border: none;" />
+                  </span>
+                  <owl-date-time [pickerType]="'calendar'" #drcrdate></owl-date-time>
+                  <input type="text" name="drcrdate" class="form-control no-bg" [owlDateTimeTrigger]="drcrdate"
+                    [owlDateTime]="drcrdate" [(ngModel)]="service.manualDrCrObj.slctdDrCrDate"
+                    placeholder="Select Dr/Cr Date" [max]="maxDate"
+                    [disabled]="service.disabledButtonAndField"
+                     />
+                </div>
+                </div>
+                <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory)">
+                    <label>Vendor Name</label>
+                    <ng-select name="vendor" [items]="vendorDetails" [(ngModel)]="service.manualDrCrObj.slctdVendor"
+                      [bindLabel]="'vendorName'" placeholder="Select Vendor"
+                      [disabled]="service.disabledButtonAndField"
+                      [searchFn]="customSearchFnForVendor"
+                      >
+                      <ng-template ng-label-tmp let-item="item">
+                        <span>{{item.vendorName}}</span> -
+                        <span>{{item.vendorId}}</span>
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                        <span [ngOptionHighlight]="search">{{item.vendorName}}</span> -
+                        <span [ngOptionHighlight]="search">{{item.vendorId}}</span>
+                      </ng-template>
+                    </ng-select>
+                </div>
+                  <div class="col-md-6" *ngIf="(service.manualDrCrObj.slctdLedgerCategory && service.manualDrCrObj.slctdVendor)">
+                    <label>Reason</label>
+                        <textarea name="reason"  class="form-control no-bg" [(ngModel)]="service.manualDrCrObj.slctdReason"
+                        [disabled]="service.disabledButtonAndField"
+                        placeholder="Enter Reason Here"
+                        style="height: 36px;">
+                      </textarea>
+                  </div>
+              </div>
+              <div class="col-md-12 form-group np-lr">
+                <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory && service.manualDrCrObj.slctdVendor)">
+                  <label>Amount</label>
+                    <input type="number" class="editable form-control"
+                    name="amount" [(ngModel)]="service.manualDrCrObj.amount" required
+                    placeholder="Enter Amount Here" 
+                    style="height: 36px;"
+                    (change)="service.calculateTotalAmount()"/>
+                </div>
+                <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory && service.manualDrCrObj.slctdVendor)">
+                    <label>Ledger</label>
+                    <ng-select name="ledger" [items]="ledgerDetailsForDrCrArray" [(ngModel)]="service.manualDrCrObj.slctdLedgerForAmount"
+                      [bindLabel]="'ledgerName'" placeholder="Select ledger"
+                      [disabled]="service.disabledButtonAndField"
+                      [searchFn]="customSearchFnForVendor">
+                      <ng-template ng-label-tmp let-item="item">
+                        <span>{{item.ledgerId}}</span> -
+                        <span>{{item.ledgerName}}</span> 
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                        <span [ngOptionHighlight]="search">{{item.ledgerId}}</span> -
+                        <span [ngOptionHighlight]="search">{{item.ledgerName}}</span>                       
+                      </ng-template>
+                    </ng-select>
+                </div>
+                <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory && service.manualDrCrObj.slctdVendor)">
+                  <label>Sale Tax</label>
+                    <input type="number" class="editable form-control"
+                    name="saletax" [(ngModel)]="service.manualDrCrObj.saletax" required
+                    placeholder="Enter Sale Tax Here" 
+                    style="height: 36px;"
+                    (change)="service.calculateTotalAmount()"/>
+                </div>
+                <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory && service.manualDrCrObj.slctdVendor)">
+                    <label>Ledger</label>
+                    <ng-select name="ledger" [items]="ledgerDetailsForDrCrArray" [(ngModel)]="service.manualDrCrObj.slctdLedgerForSaleTax"
+                      [bindLabel]="'ledgerName'" placeholder="Select ledger"
+                      [disabled]="service.disabledButtonAndField"
+                      [searchFn]="customSearchFnForVendor">
+                      <ng-template ng-label-tmp let-item="item">
+                        <span>{{item.ledgerId}}</span> -
+                        <span>{{item.ledgerName}}</span> 
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                        <span [ngOptionHighlight]="search">{{item.ledgerId}}</span> -
+                        <span [ngOptionHighlight]="search">{{item.ledgerName}}</span>                       
+                      </ng-template>
+                    </ng-select>
+                </div>
+              </div>
+
+              <div class="col-md-12 form-group np-lr">
+                <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory && service.manualDrCrObj.slctdVendor)">
+                  <label>Sales Tax Surcharge</label>
+                    <input type="number" class="editable form-control"
+                    name="salestaxsurcharge" [(ngModel)]="service.manualDrCrObj.salestaxsurcharge" required
+                    placeholder="Enter Sale TaxSurcharge Here" 
+                    style="height: 36px;"
+                    (change)="service.calculateTotalAmount()"/>
+                </div>
+                <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory && service.manualDrCrObj.slctdVendor)">
+                    <label>Ledger</label>
+                    <ng-select name="ledger" [items]="ledgerDetailsForDrCrArray" [(ngModel)]="service.manualDrCrObj.slctdLedgerForSurplusCharge"
+                      [bindLabel]="'ledgerName'" placeholder="Select ledger"
+                      [disabled]="service.disabledButtonAndField"
+                      [searchFn]="customSearchFnForVendor">
+                      <ng-template ng-label-tmp let-item="item">
+                        <span>{{item.ledgerId}}</span> -
+                        <span>{{item.ledgerName}}</span> 
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                        <span [ngOptionHighlight]="search">{{item.ledgerId}}</span> -
+                        <span [ngOptionHighlight]="search">{{item.ledgerName}}</span>                       
+                      </ng-template>
+                    </ng-select>
+                </div>
+                <!-- <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory && service.manualDrCrObj.slctdVendor)">
+                  <label>IGST</label>
+                    <input type="number" class="editable form-control"
+                    name="igst" [(ngModel)]="service.igst" required
+                    placeholder="Enter IGST Here" 
+                    style="height: 36px;"/>
+                </div>
+                <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory && service.manualDrCrObj.slctdVendor)">
+                    <label>Ledger</label>
+                    <ng-select name="ledger" [items]="ledgerDetailsForDrCrArray" [(ngModel)]="service.manualDrCrObj.slctdLedger"
+                      [bindLabel]="'ledgerName'" placeholder="Select ledger"
+                      [disabled]="service.disabledButtonAndField"
+                      [searchFn]="customSearchFnForVendor">
+                      <ng-template ng-label-tmp let-item="item">
+                        <span>{{item.ledgerId}}</span> -
+                        <span>{{item.ledgerName}}</span> 
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                        <span [ngOptionHighlight]="search">{{item.ledgerId}}</span> -
+                        <span [ngOptionHighlight]="search">{{item.ledgerName}}</span>                       
+                      </ng-template>
+                    </ng-select>
+                </div> -->
+              <!-- </div>
+              <div class="col-md-12 form-group np-lr"> -->
+                <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory && service.manualDrCrObj.slctdVendor)">
+                  <label>Total Amount</label>
+                    <input type="number" class="editable form-control"
+                    name="sgst" [(ngModel)]="service.manualDrCrObj.totalamount" 
+                    [disabled]="service.disabledButtonAndField" required
+                    readonly
+                    placeholder="Total Amount" 
+                    style="height: 36px;"/>
+                </div>
+                <div class="col-md-3" *ngIf="(service.manualDrCrObj.slctdLedgerCategory && service.manualDrCrObj.slctdVendor)">
+                  <label>Remarks</label>
+                    <textarea name="reason"  class="form-control no-bg" [(ngModel)]="service.manualDrCrObj.slctdRemarks"
+                      [disabled]="service.disabledButtonAndField"
+                      placeholder="Enter Remarks Here"
+                      style="height: 36px;">
+                    </textarea>
+                </div>
+              </div>
+              <div class="col-md-12 form-group">
+                  <button type="button" class="btn btn-primary pull-right" col-button-only [disabled]="service.disabledButtonAndField" (click) = "openPrintModal()">
+                    Print Details
+                   </button>
+                    <button type="button" class="btn btn-primary pull-right" col-button-only [disabled]="service.disabledButtonAndField" style="margin-right: 20px;" (click) = "addManualDebitCreditNote()">
+                      Save Details
+                    </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

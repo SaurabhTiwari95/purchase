@@ -1,0 +1,317 @@
+<ngx-smart-modal
+  #myModalRef
+  identifier="rfqApprovalModal"
+  (onOpen)="getApprovalDetailsForVendorRfq()"
+>
+  <div class="header heading-with-hr">
+      <h4 style="margin: 0;">
+        RFQ Quotation Approval of RFQ Id :- {{genericApprovalModalObj.objectDetails.rfqId}} , Version Number :- {{genericApprovalModalObj.objectDetails.versionNumber}} & Quote Id :- {{genericApprovalModalObj.objectDetails.quoteId}}
+      </h4>
+  </div>
+  <div class="body">
+    <div class="row heading-with-hr">
+      <div class="col-sm-12 col-md-4">
+        <dl class="dl-horizontal">                
+          <dt class="align-left">Approval For</dt>
+          <dd>: Vendor RFQ Quotation<dd>
+          <dt class="align-left">Req. Dept. for Approval</dt>
+          <dd>: <span *ngFor="let dept of genericApprovalModalObj.objectDetails.requiredDepartment;last as isLast">{{dept.departmentName}} <span *ngIf="!isLast">, </span></span>
+          <dd> 
+        </dl>
+        </div>
+        <div class="col-sm-12 col-md-4 col-md-offset-0">
+        <dl class="dl-horizontal">                
+          <dt class="align-left">Minimum Approvers</dt>
+          <dd>: {{genericApprovalModalObj.objectDetails.minApprovers}}<dd>
+          <dt class="align-left" >Total Approvers</dt>
+          <dd>: {{genericApprovalModalObj.addedApprovers.length}}<dd>
+        </dl>
+        </div>
+        <div class="col-sm-12 col-md-4">
+        <dl class="dl-horizontal">  
+          <dt class="align-left">Created By</dt>
+          <dd >: {{genericApprovalModalObj.objectDetails.quoteCreator}}<dd>
+          <dt class="align-left">Created On</dt>
+          <dd >: {{genericApprovalModalObj.objectDetails.quoteCreationDate}}<dd>
+        </dl>
+        </div>
+    </div>
+    <div class="row pad-lr-15">
+      <div class="col-md-12 form-group">
+        <h4>Conditions to be fullfilled</h4>
+        <ol style="padding-left:15px;">
+          <li>Minimum number of approvers must full fill the total minimum approvers of the document.</li>
+          <li>Approvers from required departments( <span *ngFor="let dept of genericApprovalModalObj.objectDetails.requiredDepartment;last as isLast">{{dept.departmentName}} <span *ngIf="!isLast">, </span></span> ) are must in order for Vendor RFQ Approval.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="row pad-lr-15" *ngIf="!genericApprovalModalObj.hasPendingApproval && genericApprovalModalObj.actionTaken" [permissions]="['su', 'F152P11_']">
+      <h3 class="col-md-12 text-success" style="text-align:center"> <i class="fa fa-thumbs-o-up"></i> You have Approved this Vendor RFQ Quotation.</h3>
+    </div>
+    <form class="approval_form" novalidate name="aprrover_addition" *ngIf="genericApprovalModalObj.hasPendingApproval && !genericApprovalModalObj.actionTaken">
+      <div class="box col-md-12" style="box-shadow:none;border-top:none;margin-bottom:0px;" >
+        <div class="box-header  with-border  np-lr">
+          <div class="user-block">
+            <h4 style="margin: 0;">
+              <div class="pull-right">
+                <button class="btn btn-sm btn-with-outline-only primary" data-toggle="collapse" href="#take-action" [disabled]="service.disabledButtonAndField"> Take Action</button>
+              </div>
+            </h4>
+          </div>
+        </div>
+        <div class="box-body np-lr collapse" id="take-action">
+          <div class="row pad-t">
+            <div class="col-md-6 form-group">
+              <label>Action</label>
+              <select class="form-control" name="action" [(ngModel)]="genericApprovalModalObj.slctdAction">
+                <option value="undefined" disabled selected>Select Action</option>
+                <option value="A">Approve</option>
+                <option value="C" >Comment</option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group" *ngIf="genericApprovalModalObj.slctdAction == 'C'">
+              <label>Comment</label>
+              <textarea class="form-control" name="comment" [(ngModel)]="genericApprovalModalObj.comment"
+              #message='ngModel' placeholder="Comment"></textarea>
+            </div>
+            <div class="col-md-{{genericApprovalModalObj.slctdAction == 'C' && 12 || 6}} form-group">
+              <button class="btn btn-success btn-sm pull-right" [disabled]="!genericApprovalModalObj.slctdAction || (genericApprovalModalObj.slctdAction == 'C' && !genericApprovalModalObj.comment) || service.disabledButtonAndField" (click)="makeActionByApproverForVendorRfq()" col-button-only>Submit</button>
+              <button class="btn btn-primary btn-sm pull-right" col-button-only style="margin-right:10px;" (click)="getViewPreview()" [disabled]="service.disabledButtonAndField">View Vendor RFQ Quotation</button>
+              <button class="btn btn-default btn-sm pull-right" col-button-only style="margin-right:10px;" (click)="genericApprovalModalObj.slctdAction = undefined;genericApprovalModalObj.comment = null;" [disabled]="service.disabledButtonAndField">Reset Fields</button>
+            </div>
+          </div>
+          <div *ngIf="genericApprovalModalObj.hasPendingApproval && !genericApprovalModalObj.actionTaken" [permissions]="['su', 'F152P11_']">
+            <div class="row">
+              <div class="col-md-12 form-group">
+                <h4 class="heading-with-hr">Quotation Details</h4>
+              </div>
+              <div class="col-md-12" *ngFor="let quotation of genericApprovalModalObj.enteredQuoteDetails;let i = index">
+                <div class="col-md-12 np-lr form-group">
+                    <h5 class="heading-with-hr"><a><b>{{i+1}}. {{quotation.vendorName}} ~ {{quotation.vendorId}}</b></a></h5>
+                </div>
+                <div class="table-responsive col-md-12 np-lr">
+                    <table class="table table-csv">
+                        <thead class="bg-light-green">
+                          <tr>
+                            <th width="5%">Sl. No.</th>
+                            <th width="25%">Product Name</th>
+                            <th width="10%">Product Id</th>
+                            <th width="10%">Product Unit</th>
+                            <th width="15%" numeric-column>Latest Approved Rate</th>
+                            <th width="15%" numeric-column>Product New Rate</th>
+                            <th width="20%">Document</th>
+                          </tr>
+                        </thead>
+                        <tbody all-td-vertical-align-middle>
+                          <tr *ngFor="let prod of quotation.productDetails;let j = index">
+                            <td>{{j+1}}</td>
+                            <td>{{prod.productName}}</td>
+                            <td>{{prod.productId}}</td>
+                            <td>{{prod.productUnit}}</td>
+                            <td numeric-column>
+                              <i class="fa fa-inr"></i> {{prod.latestApprovedRate && prod.latestApprovedRate || '0'}}
+                            </td>
+                            <td numeric-column>
+                              <i class="fa fa-inr"></i> {{prod.productRate}}
+                            </td>
+                            <td>
+                              <p *ngFor="let doc of prod.docDetails; let k=index">
+                                <span title="Download {{doc.docName}}" class="txt-elps">
+                                  <a href="{{doc.docS3Link}}" download="{{doc.docName}}">{{doc.docName}}</a>
+                                </span>
+                              </p>
+                              <p class="italic-text" *ngIf="!prod.docDetails.length"> No doc available</p>
+                            </td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p *ngIf="genericApprovalModalObj.errorContent"><i class="fa fa-warning"></i> {{genericApprovalModalObj.errorContent}}</p>
+              </div>
+              <div class="col-md-12" *ngIf="genericApprovalModalObj.enteredQuoteDetails.length">
+                <div class="col-md-12 np-lr form-group">
+                  <button class="btn btn-danger btn-sm pull-right" (click)="genericApprovalModalObj.enteredQuoteDetails.length = []">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <form class="approvers_form" novalidate  [permissions]="['su', 'F152P11_']">
+      <div class="box col-md-12" style="box-shadow:none;border-top:none;margin-bottom:0px;">
+        <div class="box-header  with-border  np-lr">
+          <div class="user-block">
+            <h4 style="margin: 0;">
+                Add Approvers 
+              <small class="text-danger">( Minimum Number of Approvers : <b>{{genericApprovalModalObj.objectDetails.minApprovers}} </b> <span>|  Required Department Approvers : <b> 
+                    <span *ngFor="let dept of genericApprovalModalObj.objectDetails.requiredDepartment;last as isLast">{{dept.departmentName}} <span *ngIf="!isLast">, </span></span> </b> )</span>
+              </small> 
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-toggle="collapse" href="#collapsableBoxForApprovers" [disabled]="service.disabledButtonAndField"  (click)="createApproversObj();"><i class="fa fa-plus"></i> 
+                  Add
+                </button>
+              </div>
+            </h4>
+          </div>
+        </div>
+        <div class="box-body np-lr collapse" id="collapsableBoxForApprovers">
+          <div class="row pad-t">
+            <div class="col-md-6 form-group" [ngClass]="{ 'has-error' : genericApprovalModalObj.newApprover.approverAlreadyAdded }">
+  
+              <label *ngIf="!genericApprovalModalObj.newApprover.approverAlreadyAdded">Select Approver</label>
+              <label *ngIf="genericApprovalModalObj.newApprover.approverAlreadyAdded">Approver Exists</label>
+
+                  <ng-select name="approvers" [items]="genericApprovalModalObj.userDetails"  [bindLabel]="'userFullName'"
+                   [(ngModel)]="genericApprovalModalObj.newApprover.slctdApprover" placeholder="Approver Name - Approver Email - Approver Department">
+                  <ng-template ng-label-tmp let-item="item">
+                    <span>{{item.userFullName}}</span> - 
+                    <span>{{item.userEmail}}</span> - 
+                    <span>{{item.departmentName}}</span>
+                  </ng-template>
+                  <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                      <span [ngOptionHighlight]="search">{{item.userFullName}}</span> -
+                      <span [ngOptionHighlight]="search">{{item.userEmail}}</span> - 
+                      <span [ngOptionHighlight]="search">{{item.departmentName}}</span>
+                  </ng-template>
+                  </ng-select>
+                
+            </div>
+            <div class="col-md-6 form-group">
+              <button class="btn btn-primary btn-sm pull-right" col-button-only (click)="addApproverForVendorRfq()" [disabled]="!genericApprovalModalObj.newApprover.slctdApprover || service.disabledButtonAndField" >Add</button>
+              <button class="btn btn-danger btn-sm pull-right" col-button-only style="margin-right:10px" (click)="createApproversObj()" data-toggle="collapse"
+              href="#collapsableBoxForApprovers" >Cancel</button>
+            </div>
+          </div>
+          <div class="row" *ngIf="genericApprovalModalObj.newApprover.errorMsg">
+            <div class="col-md-12 form-group">
+              <p class="text-danger"><i class="fa fa-warning"></i> {{genericApprovalModalObj.newApprover.errorMsg}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive col-md-12" style="overflow-x: visible;" *ngIf="genericApprovalModalObj.addedApprovers.length">                                            
+        <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>SI.No.</th>
+                <th>User Name</th> 
+                <th>User Email Id</th> 
+                <th>Department</th> 
+                <th>Status</th> 
+                <th status-column [permissions]='["su", "F152P111"]'>Action</th>
+              </tr>
+            </thead>
+            <tbody all-td-vertical-align-middle>
+              <tr *ngFor="let user of genericApprovalModalObj.addedApprovers;let i = index">
+                <td>{{i + 1}} </td>
+                <td>{{user.userFullName}}</td>   
+                <td>{{user.userEmail}}</td>   
+                <td>
+                  {{user.departmentName}}
+                  <p class="italic-text" *ngIf="!user.departmentName">Not Available</p>
+                </td>   
+                <td>
+                  <span class="label" [ngClass]="{'label-success': user.isApproved, 'label-danger': !user.isApproved }"> 
+                    {{user.isApproved && 'Approved' || 'Pending'}}
+                  </span>
+                </td>   
+                <td status-column [permissions]='["su", "F152P111"]'>
+                  <button type="button" class="btn btn-default action-button" *ngIf="!user.isApproved" (click)="deleteApproverForVendorRfq(i);" [permissions]='["su", "F152P111"]' [disabled]="service.disabledButtonAndField" title="Delete">
+                      <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>                                                        
+            </tbody>
+        </table> 
+      </div>
+      <div class="col-md-12 np-lr form-group" *ngIf="!genericApprovalModalObj.addedApprovers.length">
+          <p class="nothing-found-note"> No Approver have been added yet.</p>
+      </div>
+    </form>
+    <form class="doc_uploading" novalidate  [permissions]="['su', 'F152P11_']">
+      <div class="box col-md-12" style="box-shadow:none;border-top:none;margin-bottom:0px;">
+        <div class="box-header  with-border  np-lr">
+          <div class="user-block">
+            <h4 style="margin: 0;">
+                Upload Document(s)
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-toggle="collapse" href="#collapdeBoxForUploadDoc" [disabled]="service.disabledButtonAndField"  (click)="initializeDocObj();"><i class="fa fa-plus"></i> 
+                  Add
+                </button>
+              </div>
+            </h4>
+          </div>
+        </div>
+        <div class="box-body np-lr collapse" id="collapdeBoxForUploadDoc">
+          <div class="row pad-t">
+            <div class="col-md-6 form-group">
+              <label>Select Document</label>
+              <input (input)="handleFileInput($event)" type="file" multiple/>
+            </div>
+            <div class="col-md-6 form-group">
+              <button class="btn btn-primary btn-sm pull-right" col-button-only (click)="addAttachmentForVendorRfq()" 
+              [disabled]="service.disabledButtonAndField || this.genericApprovalModalObj.newDocs.length == 0" data-toggle="collapse"
+              href="#collapdeBoxForUploadDoc">Add</button>
+              <button class="btn btn-danger btn-sm pull-right" col-button-only style="margin-right:10px" (click)="initializeDocObj()" data-toggle="collapse"
+              href="#collapdeBoxForUploadDoc" >Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 np-lr form-group" *ngIf="!genericApprovalModalObj.addedDocuments.length">
+          <p class="nothing-found-note"> No Document have been added yet.</p>
+      </div>
+      <div class="col-md-12 np-lr" *ngIf="genericApprovalModalObj.addedDocuments.length">
+          <div class="col-md-12 form-group np-lr">
+              <div class="col-md-2 card text-center" style="overflow: hidden; height:28px; position:relative;" *ngFor="let file of genericApprovalModalObj.addedDocuments;let i = index">
+                <div>
+                  <p title="Download {{file.documentName}}" style="margin-bottom:0;padding:4px;" class="txt-elps">
+                    <a href="{{file.docS3Link}}" download="{{file.documentName}}" style="float:left;">{{file.documentName}}</a>
+                  </p>
+                  <i role="button" title="Delete Document" class="fa fa-close pull-right text-red" style="position: absolute; top: 7px; right: 0;" permission='["su", "F152P111"]' 
+                   (click)="deleteAttachmentForVendorRfq(i);" ng-class="{'disable-link' :service.disabledButtonAndFields}"></i>
+                </div>
+              </div>
+          </div>
+      </div>
+    </form>
+    <div class="row pad-lr-15">
+      <div class="col-md-12">
+        <div class="col-md-12 np-lr"><h4>Actions Timeline</h4></div> 
+          <div class="col-md-12 form-group" *ngIf="genericApprovalModalObj.timeLineDetails.length" style="background-color: #ecf0f5;padding: 15px;">
+            <div class="row mgn-lr-3">
+              <div class="col-md-12 offset-md-3" >
+                <ul class="timeline">
+                  <li [ngClass]="{'is-action-block time-label': data.isAction, 'is-deletion-block': !data.isAction }" *ngFor= "let data of genericApprovalModalObj.timeLineDetails"> 
+                    <i class="fa " [ngClass]="{' fa-user bg-aqua': data.isAction, ' fa-comments bg-yellow' : !data.isAction }" ></i>
+                    <div class="timeline-item">
+                      <span class="time"><i class="fa fa-clock-o"></i> {{data.creationDateTime}}</span>
+                      <h3 class="timeline-header"><a>{{data.userFullName}}</a> {{data.isAction ? 'takes action ': 'commented' }}</h3>
+                      <div class="timeline-body" [innerHTML]="data.text"> </div>
+                    </div>                                                        
+                  </li>
+                  <li><i class="fa fa-clock-o bg-gray"></i></li>
+                </ul>                                            
+              </div>
+            </div>
+        </div>
+        <div class="col-md-12 np-lr" *ngIf="!genericApprovalModalObj.timeLineDetails.length">
+          <p class="italic-text"> No actions or comments found </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="border-top: 1px solid #ccc">
+    <div class="col-md-12" style="padding-top: 10px;padding-right: 0px;">
+      <button
+      class="btn btn-danger pull-right"
+      type="button"
+      (click)="onModalClose()"
+      title="Close"
+      >
+      Close
+      </button>
+    </div>
+  </div>
+</ngx-smart-modal>

@@ -1,0 +1,327 @@
+<section class="content-header">
+    <h2>
+        Vendor RFQ
+        <small> Request for Quotation</small>
+      </h2>
+  </section>
+  
+  <section class="content" id="popupContainer">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="box box-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              {{ service.companyDetails.CompanyFullName }}
+            </h3>
+          </div>
+          <div class="box-body form-content-ang7">
+            <div class="nav-tabs-custom col-md-12 np-lr" style="margin-bottom:0;box-shadow:none">
+              <ul class="nav nav-tabs with-darker-border">
+                <li [ngClass]="{'active' : service.activeTab == 'V'}" role="button">
+                  <a (click)="checkForUpdateMode();" data-toggle="tab">View</a>
+                </li>
+                <!-- performActionOnCategorySelection() -->
+                <li role="button" [ngClass]="{'active' : service.activeTab == 'C'}" [permissions]="['su', 'F152P11_']">
+                  <a (click)="service.activeTab = 'C';" data-toggle="tab">Create/Update</a>
+                </li>
+              </ul>
+              <form #vendor_rfq_view="ngForm" *ngIf="service.activeTab == 'V'">
+                <div class="row pad-t">
+                  <div class="col-md-12 np-lr">
+                    <div class="col-md-4 form-group">
+                      <label>Location</label>
+                      <select name="location"
+                      class="form-control" required [disabled]="service.disabledButtonAndField" (change)="getAllRfqPurposesForUser(service.vendorRfqView.slctdLocation);_ResetSpinnerAndData()"
+                      [(ngModel)]="service.vendorRfqView.slctdLocation" >
+                        <option [ngValue]="undefined" disabled
+                          >Select Location</option
+                        >
+                        <option
+                          *ngFor="let location of locations"
+                          [ngValue]="location"
+                        >
+                          {{ location.locationName }} -
+                          {{ location.companyLocationId }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label>RFQ Date Range</label>
+                        <div class="input-group">
+                          <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                          <input type="text" class="form-control" [disabled]="service.disabledButtonAndField" name="daterangeInput" required daterangepicker [options]="options" (selected)="selectedDate($event, daterange);_ResetSpinnerAndData()" />
+                        </div>
+                    </div>
+                    <div class="col-md-4 form-group">
+                      <label>Status</label>
+                      <ng-select name="status" [items]="allStatusTypes" [(ngModel)]="service.vendorRfqView.slctdStatusType"
+                      [bindLabel]="'statusName'" placeholder="Select Status" [disabled]="service.disabledButtonAndField" (change)="_ResetSpinnerAndData();setDataForApproval()" required>
+                      </ng-select>
+                    </div>
+                  </div>
+                  <div class="col-md-12 np-lr" *ngIf="showApprovalDependency">
+                    <div class="col-md-4 form-group">
+                      <label>What do you want to see?</label>
+                      <ng-select name="whatdoyouwanttosee" [items]="whatDoYouWantToSee" [(ngModel)]="service.vendorRfqView.slctdType"
+                      [bindLabel]="'typeName'" placeholder="What do you want to see?" [disabled]="service.disabledButtonAndField" 
+                      [required]="showApprovalDependency" (change)="_ResetSpinnerAndData()">
+                      </ng-select>
+                    </div>
+                  </div>
+                </div>
+                <div class="box col-md-12 np-lr optional-fields" style="box-shadow:none;border-top:none;margin-bottom:0px;" >
+                  <div class="box-header np-lr">
+                    <div class="user-block">
+                      <h5><a data-toggle="collapse" href="#takeAction" (click)="(toggleTitle === 'Hide Optional Fields') ? toggleTitle = 'Show Optional Fields' : toggleTitle = 'Hide Optional Fields'"> {{toggleTitle}}</a></h5>
+                    </div>
+                  </div>
+                  <div class="box-body np-lr collapse" id="takeAction">
+                    <div class="row">
+                      <div class="col-md-12 np-lr">
+                        <div class="col-md-4 form-group">
+                          <label>Purpose <small class="italic-text">(By default all Purposes)</small></label>
+                          <div class="input-group">
+                            <div class="input-group-addon disable-checked-icheck">
+                              <div class="icheckbox_flat-green checked" style="position: relative;">
+                                <label class="control control--checkbox">
+                                  <input type="checkbox" name="singlepurpose" [(ngModel)]="service.vendorRfqView.singlePurpose"  
+                                  [disabled]="service.disabledButtonAndField" (change)="service.vendorRfqView.slctdPurpose = null"/>
+                                  <div class="control__indicator"></div>
+                                </label>
+                              </div>
+                            </div>
+                            <ng-select name="purpose" [items]="allPurposes" [(ngModel)]="service.vendorRfqView.slctdPurpose"
+                            [bindLabel]="'purposeName'" placeholder="Select Purpose" (change)="_ResetSpinnerAndData()" [disabled]="service.disabledButtonAndField || !service.vendorRfqView.singlePurpose">
+                            </ng-select>
+                          </div>
+                        </div>
+                        <div class="col-md-4 form-group">
+                          <label>RFQ Type <small class="italic-text">(By default all RFQ Type)</small></label>
+                          <div class="input-group">
+                            <div class="input-group-addon disable-checked-icheck">
+                              <div class="icheckbox_flat-green checked" style="position: relative;">
+                                <label class="control control--checkbox">
+                                  <input type="checkbox" name="singlerfqtype" [(ngModel)]="service.vendorRfqView.singleRfqType"  
+                                  [disabled]="service.disabledButtonAndField" (change)="service.vendorRfqView.slctdRfqType = null;"/>
+                                  <div class="control__indicator"></div>
+                                </label>
+                              </div>
+                            </div>
+                            <ng-select name="rfqtype" [items]="rfqTypes" [(ngModel)]="service.vendorRfqView.slctdRfqType"
+                            [bindLabel]="'typeName'" placeholder="Select RFQ Type" (change)="_ResetSpinnerAndData()" [disabled]="service.disabledButtonAndField || !service.vendorRfqView.singleRfqType">
+                            </ng-select>
+                          </div>
+                        </div>
+                        <div class="col-md-4 form-group">
+                          <label>Vendor <small class="italic-text">(By default all Vendor)</small></label>
+                          <div class="input-group">
+                            <div class="input-group-addon disable-checked-icheck">
+                              <div class="icheckbox_flat-green checked" style="position: relative;">
+                                <label class="control control--checkbox">
+                                  <input type="checkbox" name="singlevendor" [(ngModel)]="service.vendorRfqView.singleVendor"  
+                                  [disabled]="service.disabledButtonAndField" (change)="service.vendorRfqView.slctdVendor = null;"/>
+                                  <div class="control__indicator"></div>
+                                </label>
+                              </div>
+                            </div>
+                            <ng-select name="vendor" [items]="service.vendorDetails" [(ngModel)]="service.vendorRfqView.slctdVendor"
+                            [bindLabel]="'vendorName'" placeholder="Select Vendor" (change)="_ResetSpinnerAndData()" [disabled]="service.disabledButtonAndField || !service.vendorRfqView.singleVendor" [searchFn]="service.customSearchFnForVendor">
+                              <ng-template ng-label-tmp let-item="item">
+                                  <span class="ng-value-label">{{item.vendorName}} - {{item.vendorId}}</span>
+                              </ng-template>
+                              <ng-template ng-option-tmp let-item="item"> {{item.vendorName}} - {{item.vendorId}} </ng-template>
+                            </ng-select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 np-lr">
+                    <div class="col-md-12 form-group">
+                      <button type="button" class="btn btn-primary pull-right" [disabled]="vendor_rfq_view.invalid || service.disabledButtonAndField" (click)="getAllRfqsInDateRange()">Get RFQ Details</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <ng-container *ngIf="service.activeTab == 'V' && showTable">
+                  <hr class="custom-hr-with-large-width-ang7"/>
+                  <div class="row">
+                    <div class="col-md-12 np-lr">
+                      <div class="col-md-12 form-group">
+                        <h4 class="heading-with-hr" style="padding-bottom: 20px;">RFQ Details
+                          <!-- <span class="pull-right">
+                            <a (click)="addNewRfqDetails()"><i class="fa fa-plus"></i> Add New RFQ</a>
+                          </span> -->
+                        </h4>
+                      </div>
+                      <div class="col-md-12" *ngIf="service.activeTab == 'V' && startSpinner">
+                        <mat-spinner></mat-spinner>
+                      </div>
+                      <div class="col-md-12" *ngIf="service.activeTab == 'V' && !startSpinner">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                          <input type="text" class="form-control" placeholder="Search Here" (keyup)='searchEnteredText($event)'
+                          style="width: 103%;">
+                        </div>
+                      </div>
+                      <div class="col-md-12 form-group" *ngIf="service.activeTab == 'V' && service.vendorRfqView.rfqDetails.length">
+                        <ngx-datatable class="material" [columnMode]="'force'" [headerHeight]="50" [limit]="10" [footerHeight]="50"
+                        [rowHeight]="'auto'" [rows]="service.vendorRfqView.rfqDetails" [scrollbarH]="true" >
+                        <ngx-datatable-column name="RFQ Id - Version Number" [minWidth]="250"  [sortable]="true" prop="rfqId">
+                          <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{ row.rfqId }} - {{ row.versionNumber }}
+                          </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="Purpose"  [minWidth]="100" [sortable]="true" prop="purpose">
+                          <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{ row.purposeName }}
+                          </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="RFQ Type"  [minWidth]="100" [sortable]="true" prop="typeName">
+                          <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{ row.typeName }}
+                          </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="Status"  [minWidth]="100" [sortable]="true" prop="statusName">
+                          <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{ row.statusName }}
+                          </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="No. of Vendors"  [maxWidth]="150" [sortable]="true" prop="outTime">
+                          <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{ row.numberOfVendors }}
+                          </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="No. of Products"  [maxWidth]="150" [sortable]="true" prop="outTime">
+                          <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{ row.numberOfProducts }}
+                          </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="Created By"  [minWidth]="200" [sortable]="true" prop="outTime">
+                          <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{ row.createdBy }}
+                            <br>
+                            <span class="italic-text">
+                              {{ row.creatorEmail }}
+                            </span>
+                          </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="Created On"  [minWidth]="150" [sortable]="true" prop="outTime">
+                          <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{ row.createdOn }}
+                          </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="Action"  [minWidth]="100" [sortable]="true" prop="outTime">
+                          <ng-template let-row="row"  let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                            <div class="btn-group" style="overflow-y: hidden;">
+                              <button type="button" class="btn btn-default ">Action</button>
+                              <button class="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                <li>
+                                  <a title="Amend RFQ" (click)="getDetailsForVendorRfq(rowIndex)">
+                                    Amend RFQ
+                                  </a>
+                                </li>
+                                <li  *ngIf="row.isQuoteAdded" class="divider"></li>
+                                <li *ngIf="row.isQuoteAdded"><a title="RFQ Approval" (click)="openRfqApprovalModal(rowIndex)">RFQ Approval</a></li>
+                                <!-- <li class="divider"></li>
+                                <li><a title="Delete RFQ">Delete RFQ</a></li> -->
+                              </ul>
+                            </div>
+                          </ng-template>
+                        </ngx-datatable-column>
+                      </ngx-datatable>
+                      </div>
+                    </div>
+                  </div>
+              </ng-container>
+              <form #vendor_rfq_create="ngForm" *ngIf="service.activeTab == 'C'">
+                <div class="row pad-t">
+                  <div class="col-md-12 np-lr">
+                    <div class="col-md-6 form-group">
+                      <label>Location</label>
+                      <ng-select name="location" [items]="locations" (change)="getAllRfqPurposesForUser(service.vendorRfqCreate.basicDetails.slctdLocation)" [(ngModel)]="service.vendorRfqCreate.basicDetails.slctdLocation"
+                      [bindLabel]="'locationName'" required placeholder="Select Location" [disabled]="service.disabledButtonAndField || service.vendorRfqCreate.basicDetails.ifPageNum > 1 || service.isInUpdateMode" >
+                        <ng-template ng-label-tmp let-item="item">
+                          <span>{{item.locationName}}</span> - 
+                          <span>{{item.companyLocationId}}</span>
+                          </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-index="index">
+                          <span>{{item.locationName}}</span> - 
+                          <span>{{item.companyLocationId}}</span>
+                        </ng-template>
+                      </ng-select>
+                    </div>
+                    <div class="col-md-6 form-group">
+                      <label>Purpose</label>
+                      <ng-select name="purpose" [items]="allPurposes" [(ngModel)]="service.vendorRfqCreate.basicDetails.slctdPurpose"
+                      [bindLabel]="'purposeName'" required placeholder="Select Purpose" [disabled]="service.disabledButtonAndField || service.vendorRfqCreate.basicDetails.ifPageNum > 1 || service.isInUpdateMode">
+                      </ng-select>
+                    </div>
+                  </div>
+                  <div class="col-md-12 np-lr">
+                    <div class="col-md-6 form-group">
+                      <label>RFQ Type</label>
+                      <ng-select name="rfqtype" [items]="rfqTypes" [(ngModel)]="service.vendorRfqCreate.basicDetails.slctdRfqType"
+                      [bindLabel]="'typeName'" required placeholder="Select RFQ Type" [disabled]="service.disabledButtonAndField || service.vendorRfqCreate.basicDetails.ifPageNum > 1 || service.isInUpdateMode">
+                      </ng-select>
+                    </div>
+                    <div class="col-md-6 form-group" *ngIf="!service.vendorRfqCreate.basicDetails.ifPageNum || service.vendorRfqCreate.basicDetails.ifPageNum == 1  || !service.isInUpdateMode">
+                      <button type="button" class="btn btn-primary pull-right" col-button-only [disabled]="vendor_rfq_create.invalid" (click)="addVendorAndProduct()">Add Vendor and Product</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <ng-container  *ngIf="service.activeTab == 'C' && service.vendorRfqCreate.basicDetails.ifPageNum >= 1">
+                <hr class="custom-hr-with-large-width-ang7"/>
+                <div class="row heading-with-hr">
+                  <div class="col-md-12 vendor-rfq-progressbar">
+                    <ul class="progress-indicator custom-barcode-form-bar" style="margin-top:15px">
+                      <li  [ngClass]="{'completed' : service.vendorRfqCreate.basicDetails.ifPageNum >= 1}">
+                        <a style="cursor: not-allowed;" eat-click >
+                          <span class="bubble"></span>
+                          <i class="fa fa-clipboard"></i> Add Product & Vendor
+                        </a>
+                      </li>
+                      <li [ngClass]="{'completed' : service.vendorRfqCreate.basicDetails.ifPageNum >= 2}">
+                        <a style="cursor: not-allowed;" eat-click [ngClass]="{'progress-step-disabled': service.vendorRfqCreate.basicDetails.ifPageNum < 2 }">
+                          <span class="bubble"></span>
+                          <i class="fa fa-envelope"></i> Send to Vendor
+                        </a>
+                      </li>
+                      <li [ngClass]="{'completed' : service.vendorRfqCreate.basicDetails.ifPageNum >= 3}">
+                        <a style="cursor: not-allowed;" eat-click [ngClass]="{'progress-step-disabled': service.vendorRfqCreate.basicDetails.ifPageNum < 3 }">
+                          <span class="bubble"></span>
+                          <i  class="fa fa-money"></i> Quotation & Approval
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <h4 *ngIf="service.vendorRfqCreate.basicDetails.rfqId">RFQ Id :- <b>{{service.vendorRfqCreate.basicDetails.rfqId}}</b> | Status :-
+                  <span class="label" 
+                  [ngClass]="{'label-success':service.vendorRfqCreate.basicDetails.status == 'Saved','label-danger':service.vendorRfqCreate.basicDetails.status == 'Partially Saved'}">{{service.vendorRfqCreate.basicDetails.status}}</span></h4><br>
+                <div [@vendor-rfq]="service.vendorRfqCreate.basicDetails.ifPageNum >= 1">
+                  <ng-container *ngIf="service.vendorRfqCreate.basicDetails.ifPageNum == 1">
+                    <app-add-product-and-vendor></app-add-product-and-vendor>
+                  </ng-container>
+                  <ng-container *ngIf="service.vendorRfqCreate.basicDetails.ifPageNum == 2">
+                    <app-send-to-vendor></app-send-to-vendor>
+                  </ng-container>
+                  <ng-container *ngIf="service.vendorRfqCreate.basicDetails.ifPageNum == 3">
+                      <app-quotation-and-approval></app-quotation-and-approval>
+                  </ng-container>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <app-rfq-approval-modal></app-rfq-approval-modal>
