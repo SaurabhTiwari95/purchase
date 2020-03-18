@@ -29,33 +29,51 @@ export class ManualDrCrServiceService {
     slctdReason                 : undefined,
     slctdRemarks                : undefined,
     slctdLedgerForAmount        : undefined,
-    slctdLedgerForSaleTax       : undefined,
-    slctdLedgerForSurplusCharge : undefined,
+    // slctdLedgerForSaleTax       : undefined,
+    // slctdLedgerForSurplusCharge : undefined,
+    
+    /*Central Goods and Services Tax*/
+    cgst              : 0,
 
-    slctdDrCrDate      : moment().format('YYYY-MM-DD'),
-
-    ledgerCategory : [
-      { 
-        ledgerId  : 1, 
-        ledgerName: "Credit Note", 
-        ledgerCode: "C" 
-      },
-      { 
-        ledgerId  : 2, 
-        ledgerName: "Debit Note", 
-        ledgerCode: "D" 
-      }
-    ],
+    /*State           -sgst*/
+    sgst              : 0,
+    /*interState      -igst*/
+    igst              : 0,
+    /*Union Territory -utgst*/  
+    utgst             : 0,
 
     amount            : 0,
-    saletax           : 0,
-    salestaxsurcharge : 0,
-    totalamount       : 0, 
-  
+    // saletax           : 0,
+    // salestaxsurcharge : 0,
+    totalamount       : 0,
+
   }
 
+  slctdDrCrDate     = moment().format('YYYY-MM-DD');
+
+  ledgerCategory = [
+    { 
+      ledgerId  : 1, 
+      ledgerName: "Credit Note", 
+      ledgerCode: "C" 
+    },
+    { 
+      ledgerId  : 2, 
+      ledgerName: "Debit Note", 
+      ledgerCode: "D" 
+    }
+  ]
+
   calculateTotalAmount=()=>{
-    this.manualDrCrObj.totalamount = this.manualDrCrObj.amount + this.manualDrCrObj.saletax + this.manualDrCrObj.salestaxsurcharge;
+
+    this.manualDrCrObj.totalamount = this.manualDrCrObj.amount + this.manualDrCrObj.cgst + this.manualDrCrObj.sgst;
+
+    // In case of InterState Transactions
+    // this.manualDrCrObj.totalamount = this.manualDrCrObj.amount + this.manualDrCrObj.igst
+
+    // In case of Union Territory Transactions
+    // this.manualDrCrObj.totalamount = this.manualDrCrObj.amount + this.manualDrCrObj.utgst
+
   }
 
   _StartServerCall = () => {

@@ -78,14 +78,14 @@ export class ManualDrCrComponent implements OnInit {
       companyId: this.service.companyDetails.CompanyId,
       formId: this.service.formId,
     };
-    this.service._StartServerCall;
+    this.service._StartServerCall();
     this.serverService
       .post({ request }, "mainModule/getAllLedgers", {
         module: "financialStatement"
       })
       .subscribe(data => {
 
-        this.service.disabledButtonAndField = false;
+        this.service._EndServerCall(); 
         if (data.response) {
           this.ledgerDetailsForDrCrArray = data.response;
           if (data.response.length == 0) {
@@ -107,13 +107,16 @@ export class ManualDrCrComponent implements OnInit {
   addManualDebitCreditNote=()=>{
     this.service._StartServerCall();
     let companyId = this.service.companyDetails["CompanyId"];
-    let companyLocationId = this.service.manualDrCrObj.slctdLocation;
+    let companyLocationId = this.service.manualDrCrObj.slctdLocation.companyLocationId;
     
     let request = {
       companyId,
+      companyLocationId ,
       formId       : this.service.formId,
+      drCrdate     :new Date(this.service.slctdDrCrDate).getFullYear() 
+      + '-' + (new Date(this.service.slctdDrCrDate).getMonth() + 1) 
+      + '-' + new Date(this.service.slctdDrCrDate).getDate(),
       manualDrCrObj:this.service.manualDrCrObj,
-      companyLocationId
     };
     this.serverService.post({ request },"manualDebitCreditModule/addManualDebitCreditNote",{
       module: "purchase"
@@ -141,19 +144,25 @@ export class ManualDrCrComponent implements OnInit {
     window.print();
   }
 
-  resetDependentFieldsOnVendorName = () => {
-    this.service.manualDrCrObj.amount            = 0;
-    this.service.manualDrCrObj.saletax           = 0;
-    this.service.manualDrCrObj.salestaxsurcharge = 0;
-    this.service.manualDrCrObj.totalamount       = 0;
-    // this.vendorDetails                           = [];
-    // this.ledgerDetailsForDrCrArray               = [];
+  resetDetailsDependantOnVendorName=() =>{
+    this.service.manualDrCrObj.amount              = 0;
+    // this.service.manualDrCrObj.saletax           = 0;
+    // this.service.manualDrCrObj.salestaxsurcharge = 0;
+    this.service.manualDrCrObj.cgst                = 0;
+    this.service.manualDrCrObj.sgst                = 0;
+    this.service.manualDrCrObj.igst                = 0;
+    this.service.manualDrCrObj.utgst               = 0;
+    this.service.manualDrCrObj.totalamount         = 0;
+    this.ledgerDetailsForDrCrArray                 = [];
+    this.service.manualDrCrObj.slctdLedgerForAmount=null;
+    // this.service.manualDrCrObj.slctdLedgerForSaleTax = null; 
+    // this.service.manualDrCrObj.slctdLedgerForSurplusCharge =null;
+    this.getAllLedgers();
   }
-
   ngOnInit() {
     this.getAllLocations();
     //this.getAllLedgers();
     this.getAllVendors();  
-  }
+   }
 
 }
