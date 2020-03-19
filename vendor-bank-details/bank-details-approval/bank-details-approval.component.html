@@ -1,8 +1,66 @@
 <hr class="custom-hr-with-large-width-ang7" />
+<div class="container">
   <div class="row">
-    <div class="col-md-12 np-lr form-group">     
-      <div class="col-md-6">
-        <label>What do You Want to see?</label>
+    <div class="row">
+      <div class="col-md-12 np-lr form-group">
+        <div class="col-md-12">
+          <div class="option-header">
+            <h4>What do You Want to see?</h4>
+          </div>
+          <div>
+            <form (ngSubmit)="onClickedApproval()">
+              <button class="btn approval"  id="allClicked" (click)="approvalButtonClicked = 'allRequest'">
+                All vendor bank details approval request
+              </button>
+              <button class="btn approval"  id="forMeClicked" (click)="approvalButtonClicked = 'requestForMe'">
+                Vendor bank details approval for me 
+              </button>
+              <button class="btn approval"  id="byMeClicked" (click)="approvalButtonClicked = 'requestByMe'">
+                Vendor bank details approved by me
+              </button>
+
+               
+               
+                  
+                
+             
+            </form>
+            <!-- <button class="approval">All vendor bank details approval request</button>
+            <button  class="approval">All vendor bank details approval request</button>
+            <button class="approval">Vendor bank details approved by me</button> -->
+
+          </div>
+          <!-- <form (ngSubmit)="onClickedCreate()">
+            <div class="btn-group btn-group-justified btn-group-lg">
+              <div class="btn-group">
+                <button class="btn btn-cus create-clicked"  id="createClicked" (click)="createButtonClicked = 'create'">
+                  <i class="fa fa-edit" aria-hidden="true"></i>
+                  <div>ENTER VENDOR BANK DETAILS</div>
+                </button>
+              </div>
+              <div class="btn-group">
+                <button class="btn btn-cus"  id="updateClicked" (click)="createButtonClicked = 'update'">
+                  <i class="fa fa-check-circle" aria-hidden="true"></i>
+                  <div>BANK DETAILS APPROVAL</div>
+                </button>
+              </div>
+            </div>
+          </form> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="col-md-12 np-lr form-group">     
+      <div class="col-md-12">
+        <div id="menu">
+          <ul>
+            <li>All vendor bank details approval request</li>
+            <li>Vendor bank details approval for me</li>
+            <li>Vendor bank details approved by me</li>
+          </ul>
+        </div> -->
+
+        <!-- <label>What do You Want to see?</label>
         <ng-select name="whatdoyouwanttosee" [items]="vendorApprovalTypeArray" bindLabel="vendorApprovalTypeName" [(ngModel)]="bankDetailsService.vendorBankDetailsObject.slctdWhatYouWantToSee"                
              placeholder="Select Vendor Approval Type">                     
             <ng-template ng-label-tmp let-item="item">
@@ -11,9 +69,13 @@
             <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
               <span [ngOptionHighlight]="search">{{ item.vendorApprovalTypeName}}</span>                              
             </ng-template>
-          </ng-select>
+          </ng-select> -->
+<!-- 
       </div>     
-    </div>
+    </div> -->
   </div> 
+
+</div>
+  
 
 

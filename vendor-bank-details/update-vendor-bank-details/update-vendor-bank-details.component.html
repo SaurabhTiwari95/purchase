@@ -8,33 +8,29 @@
       <div class="row">
         <div class="col-md-12 form-group">
           <div class="col-md-6">
-            <label for="address">Address</label>
-            <input type="text" placeholder="Address" class="form-control" autocomplete="off" formControlName="address">
+            <label for="printname">Print Name</label>
+            <input type="text" placeholder="Print Name" class="form-control" autocomplete="off" formControlName="printname"
+            [(ngModel)]="bankDetailsService.vendorBankDetailsObject.vendorBankDetails.printName">
           </div>
           <div class="col-md-6">
             <label for="email">Email</label>
-            <input type="text" placeholder="Email" class="form-control" autocomplete="off" formControlName="email">
+            <input type="text" placeholder="Email" class="form-control" autocomplete="off" formControlName="email"
+            [(ngModel)]="bankDetailsService.vendorBankDetailsObject.vendorBankDetails.email">
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 form-group">
-          <div class="col-md-6">
-            <label for="printname">Print Name</label>
-            <input type="text" placeholder="Print Name" class="form-control" autocomplete="off" formControlName="printname">
-          </div>
-        </div>
-      </div>
+      </div>      
       <h5 class="either-side-line">Banking Information</h5>
       <div class="row">
         <div class="col-md-12 form-group">
           <div class="col-md-6">
             <label for="bank name">Bank Name</label>
-            <input type="text" placeholder="Bank Name" class="form-control" autocomplete="off" formControlName="bankname">
+            <input type="text" placeholder="Bank Name" class="form-control" autocomplete="off" formControlName="bankname"
+             [(ngModel)]="bankDetailsService.vendorBankDetailsObject.vendorBankDetails.bankName">
           </div>
           <div class="col-md-6">
             <label for="account number">Account Number</label>
-            <input type="text" placeholder="Account Number" class="form-control" autocomplete="off" formControlName="accountnumber">
+            <input type="text" placeholder="Account Number" class="form-control" autocomplete="off" formControlName="accountnumber"
+            [(ngModel)]="bankDetailsService.vendorBankDetailsObject.vendorBankDetails.accountNo">
           </div>          
         </div>
       </div>
@@ -42,11 +38,13 @@
         <div class="col-md-12 form-group">
           <div class="col-md-6">
             <label for="ifsc code">IFSC Code</label>
-            <input type="text" placeholder="IFSC Code" class="form-control" autocomplete="off" formControlName="ifsccode">
+            <input type="text" placeholder="IFSC Code" class="form-control" autocomplete="off" formControlName="ifsccode"
+            [(ngModel)]="bankDetailsService.vendorBankDetailsObject.vendorBankDetails.ifscCode">
           </div>
           <div class="col-md-6">
             <label for="bank name">Branch Name</label>
-            <input type="text" placeholder="Branch Name" class="form-control" autocomplete="off" formControlName="branchname">
+            <input type="text" placeholder="Branch Name" class="form-control" autocomplete="off" formControlName="branchname"
+            [(ngModel)]="bankDetailsService.vendorBankDetailsObject.vendorBankDetails.branchName">
           </div>
         </div>
       </div>
@@ -54,7 +52,8 @@
         <div class="col-md-12 form-group">
           <div class="col-md-6">
             <label for="micr">MICR</label>
-            <input type="text" placeholder="MICR" class="form-control" autocomplete="off" formControlName="micr">
+            <input type="text" placeholder="MICR" class="form-control" autocomplete="off" formControlName="micr"
+            [(ngModel)]="bankDetailsService.vendorBankDetailsObject.vendorBankDetails.micr">
           </div>
           <div class="col-md-6">
             <label for="transaction type">Transaction Type</label>
@@ -77,6 +76,15 @@
       </div>
       <div class="row">
         <div class="col-md-12 form-group">
+          <div class="col-md-6">
+            <label for="address">Address</label>
+            <input type="text" placeholder="Address" class="form-control" autocomplete="off" formControlName="address"
+            [(ngModel)]="bankDetailsService.vendorBankDetailsObject.vendorBankDetails.address">
+          </div>
+        </div>        
+      </div>
+      <div class="row">
+        <div class="col-md-12 form-group">
           <div class="col-md-8">
             <label>Cancel Check</label>
             <div class="input-group">
@@ -94,10 +102,7 @@
             </div>
           </div>
         </div>
-      </div>
-
-      
-       
+      </div>           
       <!-- file upload html start-->      
     <div class="col-md-12" *ngIf="!bankDetailsService.vendorBankDetailsObject.uploadedCheckImages.length">
       <p class="italic-text">No Document(s) have been added yet.</p>      
@@ -117,22 +122,24 @@
       </div>
     </div>
     <!-- file upload html end-->
-
     <div class="row">
       <div class="col-md-12">          
-        <div class="col-md-12">            
-          <button class="btn btn-danger" (click) = "resetbankDetailsForm()">Reset</button>
-          <button class="btn btn-primary pull-right" [disabled] = "!bankDetailsForm.valid">Submit</button>
+        <div class="col-md-6">
+          <button type="button" class="btn btn-danger close-reset-submit" (click) = "previousPage()">                        
+            Close
+           </button>            
+        </div>
+        <div class="col-md-6 input-group-btn">
+          <button type="button" class="btn btn-default close-reset-submit" (click) = "resetbankDetailsForm()">                        
+            Reset
+           </button>
+           <button type="button" class="btn btn-primary close-reset-submit" [disabled] = "!bankDetailsForm.valid" (click) = "addVendorBankDetail()">                        
+             Submit
+           </button>
         </div>
       </div>
     </div>  
-
-    </div>
-      
-
-    
-
-    
+    </div>             
   </form>
 </div>
 

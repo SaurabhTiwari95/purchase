@@ -28,6 +28,7 @@ import { VendorBankDetailsApprovalActionComponent } from './vendor-bank-details/
 import { GetVendorListComponent } from './vendor-bank-details/get-vendor-list/get-vendor-list.component';
 import { VendorBankDetailsHistoryComponent } from './vendor-bank-details/vendor-bank-details-history/vendor-bank-details-history.component';
 import { ManualDrCrComponent } from './manual-dr-cr/manual-dr-cr.component';
+import { ManualDrCrSaveComponent } from './manual-dr-cr/manual-dr-cr-save/manual-dr-cr-save.component';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import { ManualDrCrComponent } from './manual-dr-cr/manual-dr-cr.component';
     VendorBankDetailsApprovalActionComponent,
     GetVendorListComponent,
     VendorBankDetailsHistoryComponent,
-    ManualDrCrComponent
+    ManualDrCrComponent,
+    ManualDrCrSaveComponent
      
   ],
   imports: [

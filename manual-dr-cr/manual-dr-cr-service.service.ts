@@ -22,6 +22,14 @@ export class ManualDrCrServiceService {
   formId = '49';
   disabledButtonAndField = false;
 
+  locations                 = [];  
+  vendorDetails             = [
+    {
+      vendorId : null,
+    }
+  ];
+  ledgerDetailsForDrCrArray = [];
+
   manualDrCrObj = {
     slctdLocation               : undefined,
     slctdLedgerCategory         : undefined,
@@ -29,22 +37,15 @@ export class ManualDrCrServiceService {
     slctdReason                 : undefined,
     slctdRemarks                : undefined,
     slctdLedgerForAmount        : undefined,
-    // slctdLedgerForSaleTax       : undefined,
-    // slctdLedgerForSurplusCharge : undefined,
-    
     /*Central Goods and Services Tax*/
     cgst              : 0,
-
     /*State           -sgst*/
     sgst              : 0,
     /*interState      -igst*/
     igst              : 0,
     /*Union Territory -utgst*/  
     utgst             : 0,
-
     amount            : 0,
-    // saletax           : 0,
-    // salestaxsurcharge : 0,
     totalamount       : 0,
 
   }

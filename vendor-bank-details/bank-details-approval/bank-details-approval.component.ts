@@ -39,4 +39,26 @@ export class BankDetailsApprovalComponent implements OnInit {
     this.bankDetailsService.vendorBankDetailsObject.slctdWhatYouWantToSee = null;
   }
 
+
+  approvalButtonClicked = "";
+  onClickedApproval() {
+    if (this.approvalButtonClicked == "allRequest") {
+      $("#allClicked").addClass("allRequest-clicked");
+      $("#forMeClicked").removeClass("requestForMe-clicked");
+      $("#byMeClicked").removeClass("requestByMe-clicked");
+    } 
+    else if (this.approvalButtonClicked == "requestForMe"){
+      $("#forMeClicked").addClass("requestForMe-clicked");
+      $("#byMeClicked").removeClass("requestByMe-clicked");
+      $("#allClicked").removeClass("allRequest-clicked");
+    }
+    else if (this.approvalButtonClicked == "requestByMe"){
+      $("#byMeClicked").addClass("requestByMe-clicked");
+      $("#allClicked").removeClass("allRequest-clicked");
+      $("#forMeClicked").removeClass("requestForMe-clicked"); 
+    }
+  } 
+
+
+
 }

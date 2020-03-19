@@ -38,20 +38,8 @@ export class VendorBankDetailsComponent implements OnInit {
     this.bankDetailsService.vendorBankDetailsObject.slctdVendor = null;
     this.bankDetailsService.getLocationsForThisUser();
     this.bankDetailsService.getAllVendors();
-    
-
-
-
-
   }
-  locationDependent = () => {
-    if(this.bankDetailsService.vendorBankDetailsObject.slctdLocation == null){
-      this.bankDetailsService.toUpdateBankDetails = false;
-      this.bankDetailsService.vendorBankDetailsObject.slctdWhatYouWant = null;
-      this.bankDetailsService.addNewBank = false;
-      this.bankDetailsService.toGetVendorList = false;
-    }
-  }
+
   wantDependent = () => {
     if(this.bankDetailsService.vendorBankDetailsObject.slctdWhatYouWant.vendorTypeId && 
       this.bankDetailsService.vendorBankDetailsObject.slctdWhatYouWant.vendorTypeId == 1){
@@ -59,7 +47,6 @@ export class VendorBankDetailsComponent implements OnInit {
         this.bankDetailsService.toSeeVendorApproval = false;
         this.bankDetailsService.addNewBank = true;
         this.bankDetailsService.toSeeVendorApproval = false;
-       // this.bankDetailsService.toUpdateBankDetails = true;
       }
       else if(this.bankDetailsService.vendorBankDetailsObject.slctdWhatYouWant.vendorTypeId &&
         this.bankDetailsService.vendorBankDetailsObject.slctdWhatYouWant.vendorTypeId == 2){
@@ -68,24 +55,58 @@ export class VendorBankDetailsComponent implements OnInit {
         this.bankDetailsService.addNewBank = false;
       } 
   }
-  vendorDependent = () => {
-    this.bankDetailsService.getVendorBankDetail();
-    this.bankDetailsService.showBankHistory = true;
-    //this.bankDetailsService.toUpdateBankDetails = true;
-  }
 
-  // addItems() {
-  //   console.log("hii")
-  //   var numberOfItems = 5;
-  //   for (var i = 0; i<numberOfItems; i++) {
-  //     var ele = document.createElement("a");
-  //     ele.classList.add("dropdown-item");
-  //     ele.href = "#";
-  //     ele.innerText = "" + i;
-  //     document.querySelector(".dropdown-menu").appendChild(ele);
-  //   }
-  // }
 
+  createButtonClicked = "";
+  onClickedCreate() {
+    if (this.createButtonClicked == "create") {
+      $("#createClicked").addClass("create-clicked");
+      $("#updateClicked").removeClass("update-clicked");
+      this.bankDetailsService.addNewBank = true;
+      this.bankDetailsService.toSeeVendorApproval = false;
+    } else {
+      $("#updateClicked").addClass("update-clicked");
+      $("#createClicked").removeClass("create-clicked");
+      this.bankDetailsService.addNewBank = false;
+      this.bankDetailsService.showBankHistory = false;
+      this.bankDetailsService.toUpdateBankDetails = false;  
+      this.bankDetailsService.vendorBankDetailsObject.slctdVendor = null;    
+      this.bankDetailsService.toSeeVendorApproval = true;   
+    }
+  } 
   
+  locationDependent = () => {
+    if (this.bankDetailsService.vendorBankDetailsObject.slctdLocation == null) {
+      this.bankDetailsService.showOption = false;
+      this.bankDetailsService.addNewBank = false;
+      this.bankDetailsService.addNewBank = false;
+      this.bankDetailsService.showBankHistory = false;
+    }
+    else{
+      this.bankDetailsService.showOption = true;
+      this.bankDetailsService.addNewBank = true;      
+    }
+  };  
+
+  vendorDependent = () => {
+    if (this.bankDetailsService.vendorBankDetailsObject.slctdVendor == null) {
+      this.bankDetailsService.showBankHistory = false;
+      this.bankDetailsService.showAddButton = false;
+      this.bankDetailsService.toUpdateBankDetails = false;
+      $("#addBankClicked").removeClass("create-clicked");
+    }
+    else{
+      $("#addBankClicked").addClass("create-clicked");
+      this.bankDetailsService.getVendorBankDetail();
+      this.bankDetailsService.showBankHistory = true;  
+      this.bankDetailsService.showAddButton = true;    
+    }
+  };
+  
+  addNewDetails = () => {
+    this.bankDetailsService.getAllVendors();
+    this.bankDetailsService.toUpdateBankDetails = true;
+    this.bankDetailsService.showBankHistory = false;
+  }
 
 }

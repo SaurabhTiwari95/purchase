@@ -12,11 +12,11 @@
             {{ bankDetailsService.companyDetails.CompanyFullName }}
           </h3>
         </div>
-        <div class="box-body form-content-ang7">
+        <div class="box-body form-content-ang7 container">
           <div class="row">
             <div class="col-md-12 np-lr form-group">
-              <div class="col-md-6">
-                <label>Location <span class="asterisk-clr">*</span></label>
+              <div class="col-md-12">
+                <label>Location</label>
                 <ng-select name="location" [items]="bankDetailsService.vendorLocationArray" placeholder="Select Location"
                  bindLabel="locationName" required [(ngModel)]="bankDetailsService.vendorBankDetailsObject.slctdLocation" (change) = "locationDependent()">
                  <ng-template ng-label-tmp let-item="item">
@@ -28,44 +28,40 @@
                   <span [ngOptionHighlight]="search">{{ item.companyLocationId }}</span>                                              
                 </ng-template>                                
                 </ng-select>
-              </div> 
-              <div class="col-md-6">
-                <label>What do You Want?</label>
-                <ng-select name="whatdoyouwant" [items]="vendorTypeArray" bindLabel="vendorTypeName" [(ngModel)]="bankDetailsService.vendorBankDetailsObject.slctdWhatYouWant"                
-                placeholder="Select Vendor Type" (change) = "wantDependent()" [disabled] = "!bankDetailsService.vendorBankDetailsObject.slctdLocation">                     
-                    <ng-template ng-label-tmp let-item="item">
-                      <span>{{ item.vendorTypeName }}</span>
-                    </ng-template>
-                    <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-                      <span [ngOptionHighlight]="search">{{ item.vendorTypeName}}</span>                              
-                    </ng-template>
-                  </ng-select>
-              </div>
-            </div>
-          </div>
-          <div class="row" *ngIf="bankDetailsService.addNewBank">
-            <div class="col-md-12 np-lr form-group">
-              <div class="col-md-6">
-                <label>Vendor <span class="asterisk-clr">*</span></label>
-              <ng-select name="vendor" [items]="bankDetailsService.getAllVendorsArray" placeholder="Select Vendor"
-                 bindLabel="vendorName" required [(ngModel)]="bankDetailsService.vendorBankDetailsObject.slctdVendor" (change) = "vendorDependent()">
-                 <ng-template ng-label-tmp let-item="item">
-                  <span>{{ item.vendorName }}</span> |
-                  <span>{{ item.vendorId }}</span>
-                </ng-template>
-                <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-                  <span [ngOptionHighlight]="search">{{ item.vendorName }}</span> |                                              
-                  <span [ngOptionHighlight]="search">{{ item.vendorId }}</span>                                              
-                </ng-template>                                
-                </ng-select>
               </div>              
             </div>
           </div>
-          <!-- <div class="row" *ngIf="bankDetailsService.addNewBank">
-            <div class="col-md-12 np-lr form-group"> 
-              <div class="col-md-6">
+          <div class="row" *ngIf="bankDetailsService.showOption">
+            <div class="col-md-12 np-lr form-group">
+              <div class="col-md-12">
+                <div class="option-header">
+                  <h4>What do you want?</h4>
+                </div>
+                <form (ngSubmit)="onClickedCreate()">
+                  <div class="btn-group btn-group-justified btn-group-lg">
+                    <div class="btn-group">
+                      <button class="btn btn-cus create-clicked"  id="createClicked" (click)="createButtonClicked = 'create'">
+                        <i class="fa fa-edit" aria-hidden="true"></i>
+                        ENTER VENDOR BANK DETAILS
+                      </button>
+                    </div>
+                    <div class="btn-group">
+                      <button class="btn btn-cus"  id="updateClicked" (click)="createButtonClicked = 'update'">
+                        <i class="fa fa-check-circle" aria-hidden="true"></i>
+                        BANK DETAILS APPROVAL
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>                                      
+          <div class="row" *ngIf="bankDetailsService.addNewBank">
+            <div class="col-md-12 np-lr form-group">
+              <div class="col-md-12">
                 <label>Vendor <span class="asterisk-clr">*</span></label>
-                <ng-select name="location" [items]="bankDetailsService.getAllVendorsArray" placeholder="Select Vendor"
+                <div class="input-group">
+                <ng-select name="vendor" [items]="bankDetailsService.getAllVendorsArray" placeholder="Select Vendor"
                  bindLabel="vendorName" required [(ngModel)]="bankDetailsService.vendorBankDetailsObject.slctdVendor" (change) = "vendorDependent()">
                  <ng-template ng-label-tmp let-item="item">
                   <span>{{ item.vendorName }}</span> |
@@ -76,29 +72,28 @@
                   <span [ngOptionHighlight]="search">{{ item.vendorId }}</span>                                              
                 </ng-template>                                
                 </ng-select>
-              </div>
+                <div class="input-group-btn">
+                  <button class="btn btn-default" id="addBankClicked" (click) = "addNewDetails()" [disabled] = "!bankDetailsService.vendorBankDetailsObject.slctdVendor">
+                    <i class="fa fa-bank"></i>
+                     Add New Bank</button>
+                </div>
+                </div>              
+              </div>  
             </div>
-          </div>  -->
-          <!-- <div class="row" *ngIf="bankDetailsService.addNewBank">
-            <div class="col-md-12">
-              <div class="col-md-6"></div>
-              <div class="col-md-6"><button class="btn btn-primary " *ngIf="bankDetailsService.addNewBank"><i class="fa fa-bank"></i> Add New Bank</button></div>
-                          
-            </div>
-          </div> -->
-
-
-          <ng-container *ngIf="bankDetailsService.toGetVendorList">
-            <app-get-vendor-list></app-get-vendor-list>
-          </ng-container>
-          <ng-container *ngIf="bankDetailsService.toSeeVendorApproval">
-            <app-bank-details-approval></app-bank-details-approval>
-          </ng-container>
-          <ng-container *ngIf="bankDetailsService.showBankHistory">
-            <app-vendor-bank-details-history></app-vendor-bank-details-history>
-          </ng-container>
-          
+          </div>          
         </div>
+        <ng-container *ngIf="bankDetailsService.toGetVendorList">
+          <app-get-vendor-list></app-get-vendor-list>
+        </ng-container>
+        <ng-container *ngIf="bankDetailsService.toSeeVendorApproval">
+          <app-bank-details-approval></app-bank-details-approval>
+        </ng-container>
+        <ng-container *ngIf="bankDetailsService.showBankHistory">
+          <app-vendor-bank-details-history></app-vendor-bank-details-history>
+        </ng-container>
+        <ng-container *ngIf="bankDetailsService.toUpdateBankDetails">
+          <app-update-vendor-bank-details></app-update-vendor-bank-details>
+        </ng-container>
       </div>
     </div>
   </div>

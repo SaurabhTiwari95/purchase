@@ -24,9 +24,7 @@ export class ManualDrCrComponent implements OnInit {
     public modal                : ModalService,
     ) { }
 
-  locations                 = [];
-  vendorDetails             = [];
-  ledgerDetailsForDrCrArray = [];
+
 
 
 
@@ -42,7 +40,7 @@ export class ManualDrCrComponent implements OnInit {
       })
       .subscribe(data => {
         if (data["response"]) {
-          this.locations = data["response"];
+          this.service.locations = data["response"];
         }
       });
   }
@@ -59,106 +57,125 @@ export class ManualDrCrComponent implements OnInit {
         module: "vendor"
       }).subscribe(data => {
         if (data.response) {
-          this.vendorDetails = data.response;
+          this.service.vendorDetails = data.response;
         }
       })
   }
 
-  customSearchFnForVendor(ter, obj) {
-    return (
-      (obj.vendorId && obj.vendorId.toLowerCase().indexOf(ter.toLowerCase()) != -1) ||
-      (obj.vendorName && obj.vendorName.toLowerCase().indexOf(ter.toLowerCase()) != -1)  );
-  }
+  // customSearchFnForVendor(ter, obj) {
+  //   return (
+  //     (obj.vendorId && obj.vendorId.toLowerCase().indexOf(ter.toLowerCase()) != -1) ||
+  //     (obj.vendorName && obj.vendorName.toLowerCase().indexOf(ter.toLowerCase()) != -1)  );
+  // }
   
-  getAllLedgers() {
-    if (!this.service.manualDrCrObj.slctdLocation) return;
-    this.ledgerDetailsForDrCrArray = [];
-    let request = {
-      companyLocationId: this.service.manualDrCrObj.slctdLocation.companyLocationId,
-      companyId: this.service.companyDetails.CompanyId,
-      formId: this.service.formId,
-    };
-    this.service._StartServerCall();
-    this.serverService
-      .post({ request }, "mainModule/getAllLedgers", {
-        module: "financialStatement"
-      })
-      .subscribe(data => {
+  // getAllLedgers() {
+  //   if (!this.service.manualDrCrObj.slctdLocation) return;
+  //   this.service.ledgerDetailsForDrCrArray = [];
+  //   let request = {
+  //     companyLocationId: this.service.manualDrCrObj.slctdLocation.companyLocationId,
+  //     companyId: this.service.companyDetails.CompanyId,
+  //     formId: this.service.formId,
+  //   };
+  //   this.service._StartServerCall();
+  //   this.serverService
+  //     .post({ request }, "mainModule/getAllLedgers", {
+  //       module: "financialStatement"
+  //     })
+  //     .subscribe(data => {
 
-        this.service._EndServerCall(); 
-        if (data.response) {
-          this.ledgerDetailsForDrCrArray = data.response;
-          if (data.response.length == 0) {
-            this.modal.openModal(
-              "No Data Found!", "No employee details found for selected location!"
-            );
-          }
-        }
-   //     this.getAllLedgers();
-        if (data.errorCode) {
-          this.modal.openModal(
-            data.errorTitle,
-            data.errorContent
-          );
-        }
-      });
-  }
+  //       this.service._EndServerCall(); 
+  //       if (data.response) {
+  //         this.service.ledgerDetailsForDrCrArray = data.response;
+  //         if (data.response.length == 0) {
+  //           this.modal.openModal(
+  //             "No Data Found!", "No employee details found for selected location!"
+  //           );
+  //         }
+  //       }
+  //  //     this.getAllLedgers();
+  //       if (data.errorCode) {
+  //         this.modal.openModal(
+  //           data.errorTitle,
+  //           data.errorContent
+  //         );
+  //       }
+  //     });
+  // }
 
-  addManualDebitCreditNote=()=>{
-    this.service._StartServerCall();
-    let companyId = this.service.companyDetails["CompanyId"];
-    let companyLocationId = this.service.manualDrCrObj.slctdLocation.companyLocationId;
+  // addManualDebitCreditNote=()=>{
+  //   this.service._StartServerCall();
+  //   let companyId = this.service.companyDetails["CompanyId"];
+  //   let companyLocationId = this.service.manualDrCrObj.slctdLocation.companyLocationId;
     
-    let request = {
-      companyId,
-      companyLocationId ,
-      formId       : this.service.formId,
-      drCrdate     :new Date(this.service.slctdDrCrDate).getFullYear() 
-      + '-' + (new Date(this.service.slctdDrCrDate).getMonth() + 1) 
-      + '-' + new Date(this.service.slctdDrCrDate).getDate(),
-      manualDrCrObj:this.service.manualDrCrObj,
-    };
-    this.serverService.post({ request },"manualDebitCreditModule/addManualDebitCreditNote",{
-      module: "purchase"
-    })
-    .subscribe(data =>{
-      this.service._EndServerCall();
-      if (data.status == 'success') {
-        this.commonFunctionService.simpleSweetAlert(
-          "Successful",
-          data.response
-        );
-        //this.service.resetData();
-      }
-      if (data.errorTitle) {
-        this.commonFunctionService.simpleSweetAlert(
-          data.errorTitle,
-          data.errorContent,
-          "danger"
-        );
-      }
-    }) 
-  }
+  //   let request = {
+  //     companyId,
+  //     companyLocationId ,
+  //     formId       : this.service.formId,
+  //     drCrdate     :new Date(this.service.slctdDrCrDate).getFullYear() 
+  //     + '-' + (new Date(this.service.slctdDrCrDate).getMonth() + 1) 
+  //     + '-' + new Date(this.service.slctdDrCrDate).getDate(),
+  //     manualDrCrObj:this.service.manualDrCrObj,
+  //   };
+  //   this.serverService.post({ request },"manualDebitCreditModule/addManualDebitCreditNote",{
+  //     module: "purchase"
+  //   })
+  //   .subscribe(data =>{
+  //     this.service._EndServerCall();
+  //     if (data.status == 'success') {
+  //       this.commonFunctionService.simpleSweetAlert(
+  //         "Successful",
+  //         data.response
+  //       );
+  //       //this.service.resetData();
+  //     }
+  //     if (data.errorTitle) {
+  //       this.commonFunctionService.simpleSweetAlert(
+  //         data.errorTitle,
+  //         data.errorContent,
+  //         "danger"
+  //       );
+  //     }
+  //   }) 
+  // }
+
+  // getGstTypesForSlctdCust = () => {
+  //   this.service._StartServerCall
+  //   let companyId         = this.service.companyDetails["CompanyId"];
+  //   let companyLocationId = this.service.manualDrCrObj.slctdLocation.companyLocationId;
+  //   let custId            = this.service.manualDrCrObj.slctdVendor.vendorId;  
+
+  //   let request = {
+  //     companyId,
+  //     companyLocationId,
+  //     formId : this.service.formId,
+  //     custId,
+  //   };
+  //   this.serverService.post({ request },"mainModule/getGstTypesForSlctdCust",{
+  //     module : "billing"
+  //   }).subscribe(data =>{
+  //     this.service._EndServerCall();
+  //   })
+  //   }
 
   openPrintModal = () => {
     window.print();
   }
 
-  resetDetailsDependantOnVendorName=() =>{
-    this.service.manualDrCrObj.amount              = 0;
-    // this.service.manualDrCrObj.saletax           = 0;
-    // this.service.manualDrCrObj.salestaxsurcharge = 0;
-    this.service.manualDrCrObj.cgst                = 0;
-    this.service.manualDrCrObj.sgst                = 0;
-    this.service.manualDrCrObj.igst                = 0;
-    this.service.manualDrCrObj.utgst               = 0;
-    this.service.manualDrCrObj.totalamount         = 0;
-    this.ledgerDetailsForDrCrArray                 = [];
-    this.service.manualDrCrObj.slctdLedgerForAmount=null;
-    // this.service.manualDrCrObj.slctdLedgerForSaleTax = null; 
-    // this.service.manualDrCrObj.slctdLedgerForSurplusCharge =null;
-    this.getAllLedgers();
-  }
+  // resetDetailsDependantOnVendorName=() =>{
+  //   this.service.manualDrCrObj.amount              = 0;
+  //   // this.service.manualDrCrObj.saletax          = 0;
+  //   // this.service.manualDrCrObj.salestaxsurcharge= 0;
+  //   this.service.manualDrCrObj.cgst                = 0;
+  //   this.service.manualDrCrObj.sgst                = 0;
+  //   this.service.manualDrCrObj.igst                = 0;
+  //   this.service.manualDrCrObj.utgst               = 0;
+  //   this.service.manualDrCrObj.totalamount         = 0;
+  //   this.service.ledgerDetailsForDrCrArray                 = [];
+  //   this.service.manualDrCrObj.slctdLedgerForAmount=null;
+  //   // this.service.manualDrCrObj.slctdLedgerForSaleTax = null; 
+  //   // this.service.manualDrCrObj.slctdLedgerForSurplusCharge =null;
+  //   this.getAllLedgers();
+  // }
   ngOnInit() {
     this.getAllLocations();
     //this.getAllLedgers();

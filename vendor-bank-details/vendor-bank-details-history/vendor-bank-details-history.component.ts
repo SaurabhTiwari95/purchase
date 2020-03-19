@@ -25,7 +25,9 @@ export class VendorBankDetailsHistoryComponent implements OnInit {
   }
 
   updateBankDetails = () =>{
-    this.bankDetailsService.toUpdateBankDetails = true;      
+    this.bankDetailsService.toUpdateBankDetails = true;  
+    $("#addBankClicked").removeClass("create-clicked");
+    this.bankDetailsService.showBankHistory = false;    
   }
 
 }

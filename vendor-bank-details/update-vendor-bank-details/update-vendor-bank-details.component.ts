@@ -6,6 +6,7 @@ import { ModalService } from 'src/app/shared/services/modal.service';
 import { CommonFunctionService } from 'src/app/shared/services/common-function.service';
 import { BankDetailsService } from '../bank-details.service';
 import { Base64Service } from 'src/app/shared/services/base64.service';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -15,6 +16,8 @@ import { Base64Service } from 'src/app/shared/services/base64.service';
 })
 export class UpdateVendorBankDetailsComponent implements OnInit {
   bankDetailsForm: FormGroup;
+
+  selectedFile:File = null;
 
   transactionTypeArray = [
     {
@@ -38,6 +41,7 @@ export class UpdateVendorBankDetailsComponent implements OnInit {
     public commonFunctionService: CommonFunctionService,
     public bankDetailsService: BankDetailsService,
     public base64: Base64Service,
+    public http: HttpClient,
   ) {
     this.bankDetailsForm = new FormGroup({
       bankname: new FormControl(null, [Validators.required]),
@@ -49,18 +53,15 @@ export class UpdateVendorBankDetailsComponent implements OnInit {
       email: new FormControl(null, [Validators.required, Validators.required, Validators.email]),
       printname: new FormControl(null), 
       transactiontype: new FormControl(null),
-      chequeupload: new FormControl(null)    
+      chequeupload: new FormControl(null, [Validators.required])    
     }); 
    }
-
   ngOnInit() {
     this.bankDetailsService.vendorBankDetailsObject.slctdTransactionType = null;
   }
-
   resetbankDetailsForm(){
     this.bankDetailsForm.reset()
   }
-
   convertToBase64UploadProductImages(event) {
     this.base64.convertMultipleFiles(event, data => {
       if (this.bankDetailsService.vendorBankDetailsObject.uploadedCheckImages.length != 0) {
@@ -75,9 +76,6 @@ export class UpdateVendorBankDetailsComponent implements OnInit {
       }
     });
   }
-
-
-
   deleteChequeImage(_Index) {
     if (
       this.bankDetailsService.vendorBankDetailsObject.uploadedCheckImages[_Index].isDeleted ==
@@ -90,6 +88,18 @@ export class UpdateVendorBankDetailsComponent implements OnInit {
       ].isDeleted = true;
     }
   }
-
+  addVendorBankDetail = () => {
+    this.bankDetailsService.addVendorBankDetail();
+  }
+  previousPage = () =>  {
+    this.bankDetailsService.toUpdateBankDetails = false;
+    this.bankDetailsService.showBankHistory = true;
+  }
 
 }
+
+
+
+
+
+

@@ -1,23 +1,9 @@
-// .table-heading{
-//     border-bottom: 2px solid white;
-// }
-
-///////////////////////////////////////////
-// .history-table{
-//     margin-left: 5%;
-//     margin-right: 5%;
-//     border: 2px solid #2e9694;
-//     padding-left: 3%;
-//     padding-right: 3%;
-//     padding-top: 1%;
-//     padding-bottom: 1%;
-//     margin-bottom: 35px;
-//     background: #ffffff;
-// }
-/////////////////
 .table-title {
     display: block;
-    background: #418a95;
+    background-image: linear-gradient(#f5cbcb 0%, #b9efee 47%, #ededed 100%);
     padding: 1.5rem;
-    color: #fff;
+    color: #034e9a;
+}
+.table-heading{
+    border-bottom: 2px solid #034e9a;
 }

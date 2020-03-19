@@ -1,3 +1,33 @@
 .asterisk-clr{
     color: #b91f1f
   }
+  ////////////////////////////
+.option-header{
+  text-align: center;
+  border: 1px solid #e3e3e3;
+  background-image: linear-gradient(#f5cbcb 0%, #b9efee 47%, #ededed 100%);
+}
+///////////////////////
+
+  .btn-cus { 
+    background-color: #ecf0f5;
+    display: inline-block;
+    border: 2px solid #2e9694;
+    text-align: center; 
+    font-weight: 400;
+    color: #2e9694;
+    }    
+    .create-clicked,.update-clicked{
+      background-color: #2e9694;
+      color: white;
+      border: 2px solid #2e9694;
+    }
+    .btn-cus:hover {
+      text-decoration: underline;
+     }
+    ////////////////////////////////
+    .addBankClicked{
+      background-color: #2e9694;
+      color: white;
+      border: 1px solid #e3e3e3;
+    }

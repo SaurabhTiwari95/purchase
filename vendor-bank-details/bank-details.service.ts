@@ -22,8 +22,9 @@ export class BankDetailsService {
   toSeeVendorApproval = false;
   toGetVendorList = false;
   showBankHistory = false;
-
+  showOption = false;
   addNewBank = false;
+  showAddButton = false;
 
   vendorBankDetailsObject = {
     slctdLocation: {
@@ -52,7 +53,7 @@ export class BankDetailsService {
         iFSCCode: null,
         address: null,
         micr: null,
-        printName: null
+        printName: null,
       }
   ],
   slctdTransactionType: {
@@ -60,8 +61,25 @@ export class BankDetailsService {
     transactionTypeName: null,
   },
 
-  uploadedCheckImages: []
-    
+  uploadedCheckImages: [],
+
+  vendorBankDetails: {
+    bankName: null,    
+    branchName:null,
+    accountNo:null,
+    ifscCode:null,
+    address:null,
+    micr:null,
+    printName:null,
+    email:null
+  },
+  getAllVendorsInfo:[
+    {
+      vendorEmailId: "null",
+      printName: "null"
+    }
+  ],
+
   }
 
   ////////////////////////////////////// Main Object End  ////////////////////////
@@ -103,6 +121,8 @@ export class BankDetailsService {
       this.disableButtonAndFields = false;
       if (data.response) {
         this.getAllVendorsArray = data.response;
+        this.vendorBankDetailsObject.getAllVendorsInfo = data.response;
+        //console.log(this.vendorBankDetailsObject.getAllVendorsInfo[0].vendorEmailId);
       }
       if (data.status == "error") {
         this.modal.openModal("Unsuccessful", "Some error has been occured");
@@ -112,7 +132,6 @@ export class BankDetailsService {
 
  
   // server call for Vendor Bank Details
-  //getVendorBankDetailArray = [];
   getVendorBankDetail() {
     this.disableButtonAndFields = true;
     this.vendorBankDetailsObject.getVendorBankDetailArray.length = 0;
@@ -138,5 +157,39 @@ export class BankDetailsService {
       }
     });
   }  
+
+  // server call on Submit Buttton
+  addVendorBankDetail() {
+    this.disableButtonAndFields = true;
+    this.vendorBankDetailsObject.getVendorBankDetailArray.length = 0;
+    let request = {
+      companyId: this.companyDetails.CompanyId,
+      formId: "172",
+      vendorBankDetails:this.vendorBankDetailsObject.vendorBankDetails,
+      uploadedCheckImages:this.vendorBankDetailsObject.uploadedCheckImages,      
+    };
+    if (this.vendorBankDetailsObject.slctdVendor != null) {
+      request['vendorId'] = this.vendorBankDetailsObject.slctdVendor.vendorId
+    };
+    if (this.vendorBankDetailsObject.slctdLocation != null) {
+      request['companyLocationId'] = this.vendorBankDetailsObject.slctdLocation.companyLocationId
+    };
+    if (this.vendorBankDetailsObject.slctdTransactionType != null) {
+      request['transactionType'] = this.vendorBankDetailsObject.slctdTransactionType.transactionTypeName
+    };
+    this.api.post({
+      request
+    }, "vendorBankDetailModule/addVendorBankDetail", { module: "purchase" }).subscribe(data => {
+      this.disableButtonAndFields = false;
+      if (data.response) {
+        this.vendorBankDetailsObject.getVendorBankDetailArray = data.response;
+      }
+      if (data.status == "error") {
+        this.modal.openModal("Unsuccessful", "Some error has been occured");
+      }
+    });
+  }
+
+
 
 }

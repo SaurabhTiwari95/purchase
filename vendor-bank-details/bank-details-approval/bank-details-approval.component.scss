@@ -1,0 +1,33 @@
+  .approval{
+    display: inline;
+    margin: 1.9px;
+    border: 2px solid #a29a9a;
+    font-family: Gotham-Medium,serif;
+    color: #a29a9a;
+    border-radius: 4px;
+    padding: 4px 19px;
+    font-size: 2rem;
+    font-weight: 600;
+  }
+  .approval:hover{
+    text-decoration: underline;
+  }
+   ////////////////////////////
+.option-header{
+    text-align: center;
+    border: 1px solid #e3e3e3;
+    background-image: linear-gradient(#f5cbcb 0%, #b9efee 47%, #ededed 100%);
+  } 
+
+  /////////////////////////////////////////
+  .allRequest-clicked,.requestForMe-clicked,.requestByMe-clicked{
+    display: inline;
+    margin: 1.9px;
+    border: 2px solid #2e9694;
+    font-family: Gotham-Medium,serif;
+    color: #2e9694;
+    border-radius: 4px;
+    padding: 4px 19px;
+    font-size: 2rem;
+    font-weight: 600;
+  }
